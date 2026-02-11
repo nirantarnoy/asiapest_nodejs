@@ -1,0 +1,183 @@
+<%- include('../partials/layout_start') %>
+
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">บริษัท</h1>
+            <p class="text-slate-500 mt-1 font-medium">จัดการข้อมูลบริษัทในระบบ</p>
+        </div>
+        <button onclick="openAddModal()"
+            class="flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-2xl shadow-lg shadow-emerald-200 transition-all active:scale-95 font-bold">
+            <i class="fa-solid fa-plus text-sm"></i>
+            <span>เพิ่มบริษัท</span>
+        </button>
+    </div>
+
+    <div class="bg-white rounded-[2rem] shadow-sm border border-emerald-50 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-emerald-50/50">
+                        <th class="px-6 py-5 text-emerald-800 font-bold text-sm uppercase tracking-wider">รหัส</th>
+                        <th class="px-6 py-5 text-emerald-800 font-bold text-sm uppercase tracking-wider">ชื่อบริษัท
+                        </th>
+                        <th class="px-6 py-5 text-emerald-800 font-bold text-sm uppercase tracking-wider">Tax ID</th>
+                        <th class="px-6 py-5 text-emerald-800 font-bold text-sm uppercase tracking-wider">เบอร์โทรศัพท์
+                        </th>
+                        <th class="px-6 py-5 text-emerald-800 font-bold text-sm uppercase tracking-wider text-right">
+                            จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-emerald-50">
+                    <% items.forEach(item=> { %>
+                        <tr class="hover:bg-emerald-50/30 transition-colors group">
+                            <td class="px-6 py-5">
+                                <span
+                                    class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-xs font-bold ring-1 ring-emerald-200">
+                                    <%= item.code %>
+                                </span>
+                            </td>
+                            <td class="px-6 py-5 font-bold text-slate-700">
+                                <%= item.name %><br>
+                                    <span class="text-xs text-slate-400 font-medium">
+                                        <%= item.eng_name || '-' %>
+                                    </span>
+                            </td>
+                            <td class="px-6 py-5 text-slate-500 text-sm">
+                                <%= item.tax_id || '-' %>
+                            </td>
+                            <td class="px-6 py-5 text-slate-500 text-sm">
+                                <%= item.phone || '-' %>
+                            </td>
+                            <td class="px-6 py-5 text-right">
+                                <div
+                                    class="flex justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button onclick='openEditModal(<%- JSON.stringify(item) %>)'
+                                        class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-emerald-600 hover:border-emerald-200 hover:bg-emerald-50 transition-all">
+                                        <i class="fa-solid fa-pen-to-square text-sm"></i>
+                                    </button>
+                                    <a href="/company/delete/<%= item.id %>"
+                                        onclick="return confirm('ยืนยันการลบข้อมูล?')"
+                                        class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 transition-all">
+                                        <i class="fa-solid fa-trash-can text-sm"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <% }) %>
+                            <% if (items.length===0) { %>
+                                <tr>
+                                    <td colspan="5" class="px-6 py-20 text-center text-slate-400">
+                                        <i class="fa-solid fa-folder-open text-5xl mb-4 opacity-20 block"></i>
+                                        <span class="font-medium">ไม่พบข้อมูลบริษัท</span>
+                                    </td>
+                                </tr>
+                                <% } %>
+                </tbody>
+            </table>
+        </div>
+        <%- include('../partials/pagination') %>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div id="modal"
+        class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+        <div
+            class="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div class="p-8 border-b border-slate-50 flex justify-between items-center">
+                <h3 id="modalTitle" class="text-2xl font-black text-slate-800">เพิ่มบริษัท</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <form id="modalForm" method="POST" action="/company/add" class="p-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-1">รหัสบริษัท</label>
+                        <input type="text" name="code" id="itemCode" required
+                            class="w-full px-5 py-3 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium"
+                            placeholder="รหัสบริษัท">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-1">เลขประจำตัวผู้เสียภาษี</label>
+                        <input type="text" name="tax_id" id="itemTaxId"
+                            class="w-full px-5 py-3 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium"
+                            placeholder="Tax ID">
+                    </div>
+                    <div class="space-y-2 md:col-span-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-1">ชื่อบริษัท (ไทย)</label>
+                        <input type="text" name="name" id="itemName" required
+                            class="w-full px-5 py-3 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium"
+                            placeholder="ชื่อบริษัทภาษาไทย">
+                    </div>
+                    <div class="space-y-2 md:col-span-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-1">ชื่อบริษัท (English)</label>
+                        <input type="text" name="eng_name" id="itemEngName"
+                            class="w-full px-5 py-3 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium"
+                            placeholder="Company Name (English)">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-1">เบอร์โทรศัพท์</label>
+                        <input type="text" name="phone" id="itemPhone"
+                            class="w-full px-5 py-3 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium"
+                            placeholder="Phone Number">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-1">อีเมล</label>
+                        <input type="email" name="email" id="itemEmail"
+                            class="w-full px-5 py-3 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium"
+                            placeholder="Email Address">
+                    </div>
+                    <div class="space-y-2 md:col-span-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-1">ที่อยู่</label>
+                        <textarea name="address" id="itemAddress" rows="2"
+                            class="w-full px-5 py-3 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium"
+                            placeholder="ที่อยู่บริษัท"></textarea>
+                    </div>
+                </div>
+                <div class="flex space-x-4 pt-8">
+                    <button type="button" onclick="closeModal()"
+                        class="flex-1 px-8 py-4 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl font-bold transition-colors">ยกเลิก</button>
+                    <button type="submit"
+                        class="flex-1 px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-bold shadow-lg shadow-emerald-100 transition-all active:scale-95">บันทึกข้อมูล</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('modal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalForm = document.getElementById('modalForm');
+
+        function openAddModal() {
+            modalTitle.innerText = 'เพิ่มบริษัท';
+            modalForm.action = '/company/add';
+            document.getElementById('itemCode').value = '';
+            document.getElementById('itemName').value = '';
+            document.getElementById('itemEngName').value = '';
+            document.getElementById('itemTaxId').value = '';
+            document.getElementById('itemPhone').value = '';
+            document.getElementById('itemEmail').value = '';
+            document.getElementById('itemAddress').value = '';
+            modal.classList.remove('hidden');
+        }
+
+        function openEditModal(item) {
+            modalTitle.innerText = 'แก้ไขบริษัท';
+            modalForm.action = `/company/edit/${item.id}`;
+            document.getElementById('itemCode').value = item.code || '';
+            document.getElementById('itemName').value = item.name || '';
+            document.getElementById('itemEngName').value = item.eng_name || '';
+            document.getElementById('itemTaxId').value = item.tax_id || '';
+            document.getElementById('itemPhone').value = item.phone || '';
+            document.getElementById('itemEmail').value = item.email || '';
+            document.getElementById('itemAddress').value = item.address || '';
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+        }
+    </script>
+
+    <%- include('../partials/layout_end') %>

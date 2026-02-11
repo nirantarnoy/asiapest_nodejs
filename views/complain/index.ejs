@@ -1,0 +1,89 @@
+<%- include('../partials/layout_start') %>
+
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">ข้อร้องเรียน (Complaint)</h1>
+            <p class="text-slate-500 mt-1 font-medium">จัดการข้อร้องเรียนและการติดตามงาน</p>
+        </div>
+        <a href="/complain/create"
+            class="flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-2xl shadow-lg shadow-emerald-200 transition-all active:scale-95 font-bold">
+            <i class="fa-solid fa-plus text-sm"></i>
+            <span>สร้างข้อร้องเรียน</span>
+        </a>
+    </div>
+
+    <div class="bg-white rounded-[2rem] shadow-sm border border-emerald-50 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-emerald-50/50">
+                        <th class="px-6 py-5 text-emerald-800 font-bold text-sm uppercase tracking-wider">เลขที่</th>
+                        <th class="px-6 py-5 text-emerald-800 font-bold text-sm uppercase tracking-wider">วันที่</th>
+                        <th class="px-6 py-5 text-emerald-800 font-bold text-sm uppercase tracking-wider">ลูกค้า</th>
+                        <th class="px-6 py-5 text-emerald-800 font-bold text-sm uppercase tracking-wider">
+                            หัวข้อ/รายละเอียด</th>
+                        <th class="px-6 py-5 text-emerald-800 font-bold text-sm uppercase tracking-wider text-center">
+                            สถานะ</th>
+                        <th class="px-6 py-5 text-emerald-800 font-bold text-sm uppercase tracking-wider text-right">
+                            จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-emerald-50">
+                    <% items.forEach((item)=> { %>
+                        <tr class="hover:bg-emerald-50/30 transition-colors group">
+                            <td class="px-6 py-5 font-bold text-slate-700">
+                                <%= item.complain_no %>
+                            </td>
+                            <td class="px-6 py-5 text-slate-600">
+                                <%= item.complain_date ? new Date(item.complain_date).toLocaleDateString('th-TH') : '-'
+                                    %>
+                            </td>
+                            <td class="px-6 py-5 text-slate-600">
+                                <%= item.customer_name || '-' %>
+                            </td>
+                            <td class="px-6 py-5 text-slate-600">
+                                <%= item.description || '-' %>
+                            </td>
+                            <td class="px-6 py-5 text-center">
+                                <% if (item.status==1) { %>
+                                    <span
+                                        class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-bold ring-1 ring-amber-200">Open</span>
+                                    <% } else if (item.status==2) { %>
+                                        <span
+                                            class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold ring-1 ring-emerald-200">Closed</span>
+                                        <% } else { %>
+                                            <span
+                                                class="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-bold ring-1 ring-slate-200">Unknown</span>
+                                            <% } %>
+                            </td>
+                            <td class="px-6 py-5 text-right">
+                                <div
+                                    class="flex justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <a href="/complain/edit/<%= item.id %>"
+                                        class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-emerald-600 hover:border-emerald-200 hover:bg-emerald-50 transition-all">
+                                        <i class="fa-solid fa-pen-to-square text-sm"></i>
+                                    </a>
+                                    <a href="/complain/delete/<%= item.id %>"
+                                        onclick="return confirm('ยืนยันการลบข้อมูล?')"
+                                        class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 transition-all">
+                                        <i class="fa-solid fa-trash-can text-sm"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <% }) %>
+                            <% if (items.length===0) { %>
+                                <tr>
+                                    <td colspan="6" class="px-6 py-20 text-center text-slate-400">
+                                        <i class="fa-solid fa-folder-open text-5xl mb-4 opacity-20 block"></i>
+                                        <span class="font-medium">ไม่พบข้อมูลข้อร้องเรียน</span>
+                                    </td>
+                                </tr>
+                                <% } %>
+                </tbody>
+            </table>
+        </div>
+        <%- include('../partials/pagination') %>
+    </div>
+
+    <%- include('../partials/layout_end') %>

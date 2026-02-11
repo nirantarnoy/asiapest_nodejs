@@ -1,0 +1,349 @@
+<aside id="mainSidebar"
+    class="fixed top-0 left-0 bottom-0 w-72 bg-white border-r border-emerald-100 z-[60] transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out shadow-lg lg:shadow-none">
+    <div class="p-6 border-b border-emerald-50 bg-[#f0f9f4]/30">
+        <h1 class="text-2xl font-black text-emerald-800 tracking-tight">AsiaPEST</h1>
+        <p class="text-[10px] uppercase font-bold text-emerald-600/50 tracking-[0.2em] mt-1">Management System</p>
+    </div>
+
+    <nav class="p-4 space-y-1 overflow-y-auto h-[calc(100vh-90px)] custom-scrollbar">
+        <% const isActive=(path)=> currentPath === path;
+            const isSubActive = (paths) => paths.some(path => currentPath.startsWith(path));
+            %>
+            <!-- Dashboard -->
+            <a href="/dashboard"
+                class="flex items-center space-x-3 px-4 py-2.5 rounded-xl transition-all duration-200 group <%= isActive('/dashboard') ? 'bg-emerald-50 text-emerald-700 shadow-sm' : 'text-slate-500 hover:bg-emerald-50/50 hover:text-emerald-700' %>">
+                <i class="fa-solid fa-tachometer-alt w-5 text-center text-lg"></i>
+                <span class="font-semibold text-sm font-kanit">ภาพรวมระบบ</span>
+            </a>
+
+            <!-- Company -->
+            <a href="/company"
+                class="flex items-center space-x-3 px-4 py-2.5 rounded-xl transition-all duration-200 group <%= isActive('/company') ? 'bg-emerald-50 text-emerald-700 shadow-sm' : 'text-slate-500 hover:bg-emerald-50/50 hover:text-emerald-700' %> font-kanit">
+                <i class="fa-solid fa-building w-5 text-center text-lg"></i>
+                <span class="font-semibold text-sm">บริษัท</span>
+            </a>
+
+            <!-- General Settings Group -->
+            <div class="pt-4 pb-1 group-menu" data-menu="settings">
+                <div class="text-[10px] uppercase font-bold text-slate-400 px-4 mb-1 tracking-widest">ตั้งค่าทั่วไป
+                </div>
+                <a href="/import-master"
+                    class="flex items-center space-x-3 px-4 py-2 rounded-xl transition-all text-sm font-kanit <%= isActive('/import-master') ? 'bg-emerald-50 text-emerald-700 shadow-sm' : 'text-slate-500 hover:bg-emerald-50/50 hover:text-emerald-700' %>">
+                    <i class="fa-solid fa-file-import w-5 text-center"></i>
+                    <span>Import Master</span>
+                </a>
+            </div>
+
+            <!-- Storage Group -->
+            <div class="pt-2">
+                <% const storagePaths=['/warehouses', '/locations' , '/stock-trans' , '/stock-sum' , '/stock-count' ];
+                    %>
+                    <button
+                        class="w-full flex items-center justify-between px-4 py-2 rounded-xl transition-all font-kanit <%= isSubActive(storagePaths) ? 'bg-emerald-50/50 text-emerald-700' : 'text-slate-600 hover:bg-emerald-50' %>"
+                        onclick="toggleSubmenu('storageMenu')">
+                        <div class="flex items-center space-x-3 font-semibold">
+                            <i class="fa-solid fa-warehouse w-5 text-center"></i>
+                            <span class="text-sm">ที่จัดเก็บสินค้า</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200 <%= isSubActive(storagePaths) ? 'rotate-180' : '' %>"
+                            id="storageMenuIcon"></i>
+                    </button>
+                    <div id="storageMenu" class="<%= isSubActive(storagePaths) ? '' : 'hidden' %> pl-11 space-y-1 mt-1">
+                        <a href="/warehouses"
+                            class="block py-2 text-sm <%= isActive('/warehouses') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">คลังสินค้า</a>
+                        <a href="/locations"
+                            class="block py-2 text-sm <%= isActive('/locations') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">ตำแหน่งจัดเก็บ</a>
+                        <a href="/stock-trans"
+                            class="block py-2 text-sm <%= isActive('/stock-trans') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">ประวัติรับเข้า-ออกคลัง</a>
+                        <a href="/stock-sum"
+                            class="block py-2 text-sm <%= isActive('/stock-sum') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">สินค้าคงเหลือ</a>
+                        <a href="/stock-count"
+                            class="block py-2 text-sm <%= isActive('/stock-count') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">นับสต๊อก</a>
+                    </div>
+            </div>
+
+            <!-- Product Group -->
+            <div class="pt-2">
+                <% const productPaths=['/product-types', '/product-groups' , '/units' , '/products' , '/journal-issue'
+                    ]; %>
+                    <button
+                        class="w-full flex items-center justify-between px-4 py-2 rounded-xl transition-all font-kanit <%= isSubActive(productPaths) ? 'bg-emerald-50/50 text-emerald-700' : 'text-slate-600 hover:bg-emerald-50' %>"
+                        onclick="toggleSubmenu('productMenu')">
+                        <div class="flex items-center space-x-3 font-semibold">
+                            <i class="fa-solid fa-cubes w-5 text-center"></i>
+                            <span class="text-sm">ข้อมูลสินค้า</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200 <%= isSubActive(productPaths) ? 'rotate-180' : '' %>"
+                            id="productMenuIcon"></i>
+                    </button>
+                    <div id="productMenu" class="<%= isSubActive(productPaths) ? '' : 'hidden' %> pl-11 space-y-1 mt-1">
+                        <a href="/product-types"
+                            class="block py-2 text-sm <%= isActive('/product-types') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">ประเภทสินค้า</a>
+                        <a href="/product-groups"
+                            class="block py-2 text-sm <%= isActive('/product-groups') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">กลุ่มสินค้า</a>
+                        <a href="/units"
+                            class="block py-2 text-sm <%= isActive('/units') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">หน่วยนับ</a>
+                        <a href="/products"
+                            class="block py-2 text-sm <%= isActive('/products') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">สินค้า</a>
+                        <a href="/journal-issue"
+                            class="block py-2 text-sm <%= isActive('/journal-issue') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">เบิกสินค้า</a>
+                    </div>
+            </div>
+
+            <!-- Customer Group -->
+            <div class="pt-2">
+                <% const customerPaths=['/customer-groups', '/customer-types' , '/customers' ]; %>
+                    <button
+                        class="w-full flex items-center justify-between px-4 py-2 rounded-xl transition-all font-kanit <%= isSubActive(customerPaths) ? 'bg-emerald-50/50 text-emerald-700' : 'text-slate-600 hover:bg-emerald-50' %>"
+                        onclick="toggleSubmenu('customerMenu')">
+                        <div class="flex items-center space-x-3 font-semibold">
+                            <i class="fa-solid fa-users w-5 text-center"></i>
+                            <span class="text-sm">ลูกค้า</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200 <%= isSubActive(customerPaths) ? 'rotate-180' : '' %>"
+                            id="customerMenuIcon"></i>
+                    </button>
+                    <div id="customerMenu"
+                        class="<%= isSubActive(customerPaths) ? '' : 'hidden' %> pl-11 space-y-1 mt-1">
+                        <a href="/customer-groups"
+                            class="block py-2 text-sm <%= isActive('/customer-groups') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">กลุ่มลูกค้า</a>
+                        <a href="/customer-types"
+                            class="block py-2 text-sm <%= isActive('/customer-types') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">ประเภทลูกค้า</a>
+                        <a href="/customers"
+                            class="block py-2 text-sm <%= isActive('/customers') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">ลูกค้า</a>
+                    </div>
+            </div>
+
+            <!-- Purchasing Group -->
+            <div class="pt-2">
+                <% const purchasePaths=['/vendors', '/pur-req' , '/pur-req-approve' , '/pur-orders' ]; %>
+                    <button
+                        class="w-full flex items-center justify-between px-4 py-2 rounded-xl transition-all font-kanit <%= isSubActive(purchasePaths) ? 'bg-emerald-50/50 text-emerald-700' : 'text-slate-600 hover:bg-emerald-50' %>"
+                        onclick="toggleSubmenu('purchaseMenu')">
+                        <div class="flex items-center space-x-3 font-semibold">
+                            <i class="fa-solid fa-shopping-cart w-5 text-center"></i>
+                            <span class="text-sm">จัดซื้อ</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200 <%= isSubActive(purchasePaths) ? 'rotate-180' : '' %>"
+                            id="purchaseMenuIcon"></i>
+                    </button>
+                    <div id="purchaseMenu"
+                        class="<%= isSubActive(purchasePaths) ? '' : 'hidden' %> pl-11 space-y-1 mt-1">
+                        <a href="/vendors"
+                            class="block py-2 text-sm <%= isActive('/vendors') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">ทะเบียนผู้ขาย</a>
+                        <a href="/pur-req"
+                            class="block py-2 text-sm <%= isActive('/pur-req') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">ใบขอซื้อ</a>
+                        <a href="/pur-req-approve"
+                            class="block py-2 text-sm <%= isActive('/pur-req-approve') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">ใบขอซื้ออนุมัติ</a>
+                        <a href="/pur-orders"
+                            class="block py-2 text-sm <%= isActive('/pur-orders') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">ใบสั่งซื้อ</a>
+                    </div>
+            </div>
+
+            <!-- Service Management Group -->
+            <div class="pt-2">
+                <% const servicePaths=['/pay-methods', '/pay-terms' , '/tasks' , '/service-types' , '/std-prices'
+                    , '/estimate-price' , '/service' , '/quotations' , '/contracts' , '/service-plans' , '/job-cards'
+                    , '/complain' ]; %>
+                    <button
+                        class="w-full flex items-center justify-between px-4 py-2 rounded-xl transition-all font-kanit <%= isSubActive(servicePaths) ? 'bg-emerald-50/50 text-emerald-700' : 'text-slate-600 hover:bg-emerald-50' %>"
+                        onclick="toggleSubmenu('serviceMenu')">
+                        <div class="flex items-center space-x-3 font-semibold">
+                            <i class="fa-solid fa-calendar w-5 text-center"></i>
+                            <span class="text-sm">จัดการงานบริการ</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200 <%= isSubActive(servicePaths) ? 'rotate-180' : '' %>"
+                            id="serviceMenuIcon"></i>
+                    </button>
+                    <div id="serviceMenu" class="<%= isSubActive(servicePaths) ? '' : 'hidden' %> pl-11 space-y-1 mt-1">
+                        <a href="/pay-methods"
+                            class="block py-2 text-sm <%= isActive('/pay-methods') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">วิธีชำระเงิน</a>
+                        <a href="/pay-terms"
+                            class="block py-2 text-sm <%= isActive('/pay-terms') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">เงื่อนไขชำระเงิน</a>
+                        <a href="/tasks"
+                            class="block py-2 text-sm <%= isActive('/tasks') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">ขั้นตอนงาน</a>
+                        <a href="/service-types"
+                            class="block py-2 text-sm <%= isActive('/service-types') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">ประเภทบริการ</a>
+                        <a href="/std-prices"
+                            class="block py-2 text-sm <%= isActive('/std-prices') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">ราคามาตรฐาน</a>
+                        <a href="/estimate-price"
+                            class="block py-2 text-sm <%= isActive('/estimate-price') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">ประเมินราคา</a>
+                        <a href="/service"
+                            class="block py-2 text-sm <%= isActive('/service') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">ใบสั่งบริการ</a>
+                        <a href="/quotations"
+                            class="block py-2 text-sm <%= isActive('/quotations') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">ใบเสนอราคา</a>
+                        <a href="/contracts"
+                            class="block py-2 text-sm <%= isActive('/contracts') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">สัญญา</a>
+                        <a href="/service-plans"
+                            class="block py-2 text-sm <%= isActive('/service-plans') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">แผนงานบริการ</a>
+                        <a href="/job-cards"
+                            class="block py-2 text-sm <%= isActive('/job-cards') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">การ์ดงานบริการ</a>
+                        <a href="/complain"
+                            class="block py-2 text-sm <%= isActive('/complain') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">ข้อร้องเรียน</a>
+                    </div>
+            </div>
+
+            <!-- Logistics Group -->
+            <div class="pt-2">
+                <% const carPaths=['/car-types', '/cars' ]; %>
+                    <button
+                        class="w-full flex items-center justify-between px-4 py-2 rounded-xl transition-all font-kanit <%= isSubActive(carPaths) ? 'bg-emerald-50/50 text-emerald-700' : 'text-slate-600 hover:bg-emerald-50' %>"
+                        onclick="toggleSubmenu('carMenu')">
+                        <div class="flex items-center space-x-3 font-semibold">
+                            <i class="fa-solid fa-truck w-5 text-center"></i>
+                            <span class="text-sm">ข้อมูลรถ</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200 <%= isSubActive(carPaths) ? 'rotate-180' : '' %>"
+                            id="carMenuIcon"></i>
+                    </button>
+                    <div id="carMenu" class="<%= isSubActive(carPaths) ? '' : 'hidden' %> pl-11 space-y-1 mt-1">
+                        <a href="/car-types"
+                            class="block py-2 text-sm <%= isActive('/car-types') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">ประเภทรถ</a>
+                        <a href="/cars"
+                            class="block py-2 text-sm <%= isActive('/cars') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">รถ</a>
+                    </div>
+            </div>
+
+            <!-- HR Group -->
+            <div class="pt-2">
+                <% const hrPaths=['/positions', '/employees' ]; %>
+                    <button
+                        class="w-full flex items-center justify-between px-4 py-2 rounded-xl transition-all font-kanit <%= isSubActive(hrPaths) ? 'bg-emerald-50/50 text-emerald-700' : 'text-slate-600 hover:bg-emerald-50' %>"
+                        onclick="toggleSubmenu('hrMenu')">
+                        <div class="flex items-center space-x-3 font-semibold">
+                            <i class="fa-solid fa-users-cog w-5 text-center"></i>
+                            <span class="text-sm">พนักงาน</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200 <%= isSubActive(hrPaths) ? 'rotate-180' : '' %>"
+                            id="hrMenuIcon"></i>
+                    </button>
+                    <div id="hrMenu" class="<%= isSubActive(hrPaths) ? '' : 'hidden' %> pl-11 space-y-1 mt-1">
+                        <a href="/positions"
+                            class="block py-2 text-sm <%= isActive('/positions') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">ตำแหน่ง</a>
+                        <a href="/employees"
+                            class="block py-2 text-sm <%= isActive('/employees') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">พนักงาน</a>
+                    </div>
+            </div>
+
+            <!-- Reports Group -->
+            <div class="pt-2">
+                <% const reportPaths=['/reports/stock-movement', '/reports/sales' ]; %>
+                    <button
+                        class="w-full flex items-center justify-between px-4 py-2 rounded-xl transition-all font-kanit <%= isSubActive(reportPaths) ? 'bg-emerald-50/50 text-emerald-700' : 'text-slate-600 hover:bg-emerald-50' %>"
+                        onclick="toggleSubmenu('reportMenu')">
+                        <div class="flex items-center space-x-3 font-semibold">
+                            <i class="fa-solid fa-chart-line w-5 text-center"></i>
+                            <span class="text-sm">รายงาน</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200 <%= isSubActive(reportPaths) ? 'rotate-180' : '' %>"
+                            id="reportMenuIcon"></i>
+                    </button>
+                    <div id="reportMenu" class="<%= isSubActive(reportPaths) ? '' : 'hidden' %> pl-11 space-y-1 mt-1">
+                        <a href="/reports/stock-movement"
+                            class="block py-2 text-sm <%= isActive('/reports/stock-movement') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">รายงานสต๊อกสินค้า</a>
+                        <a href="/reports/sales"
+                            class="block py-2 text-sm <%= isActive('/reports/sales') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">รายงานการขาย</a>
+                    </div>
+            </div>
+
+            <!-- User Management Group -->
+            <div class="pt-2">
+                <% const userPaths=['/user-groups', '/users' , '/permissions' , '/logs/access' , '/logs/action' ]; %>
+                    <button
+                        class="w-full flex items-center justify-between px-4 py-2 rounded-xl transition-all font-kanit <%= isSubActive(userPaths) ? 'bg-emerald-50/50 text-emerald-700' : 'text-slate-600 hover:bg-emerald-50' %>"
+                        onclick="toggleSubmenu('userSettingsMenu')">
+                        <div class="flex items-center space-x-3 font-semibold">
+                            <i class="fa-solid fa-user-shield w-5 text-center"></i>
+                            <span class="text-sm">ผู้ใช้งาน</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200 <%= isSubActive(userPaths) ? 'rotate-180' : '' %>"
+                            id="userSettingsMenuIcon"></i>
+                    </button>
+                    <div id="userSettingsMenu"
+                        class="<%= isSubActive(userPaths) ? '' : 'hidden' %> pl-11 space-y-1 mt-1">
+                        <a href="/user-groups"
+                            class="block py-2 text-sm <%= isActive('/user-groups') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">กลุ่มผู้ใช้งาน</a>
+                        <a href="/users"
+                            class="block py-2 text-sm <%= isActive('/users') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">ผู้ใช้งาน</a>
+                        <a href="/permissions"
+                            class="block py-2 text-sm <%= isActive('/permissions') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">สิทธิ์การใช้งาน</a>
+                        <a href="/logs/access"
+                            class="block py-2 text-sm <%= isActive('/logs/access') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">Log
+                            การเข้าใช้งาน</a>
+                        <a href="/logs/action"
+                            class="block py-2 text-sm <%= isActive('/logs/action') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">Log
+                            กิจกรรม</a>
+                    </div>
+            </div>
+
+            <!-- Backup Group -->
+            <div class="pt-6">
+                <div class="text-[10px] uppercase font-bold text-slate-400 px-4 mb-2 tracking-widest">System</div>
+                <a href="/backup"
+                    class="flex items-center space-x-3 px-4 py-2.5 rounded-xl transition-all group font-kanit <%= isActive('/backup') ? 'bg-rose-50 text-rose-600 shadow-sm' : 'text-slate-500 hover:bg-rose-50/50 hover:text-rose-600' %>">
+                    <i class="fa-solid fa-database w-5 text-center transition-colors"></i>
+                    <span class="font-semibold text-sm">สำรองข้อมูล</span>
+                </a>
+            </div>
+    </nav>
+</aside>
+
+<!-- Sidebar Overlay for Mobile -->
+<div id="sidebarOverlay" class="fixed inset-0 bg-slate-900/50 z-[55] hidden lg:hidden"></div>
+
+<style>
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #e2e8f0;
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #10b981;
+    }
+
+    .font-kanit {
+        font-family: 'Prompt', sans-serif;
+    }
+
+    /* Updated to Prompt */
+
+    /* Fallback to Outfit for now, or add Kanit if needed */
+</style>
+
+<script>
+    function toggleSubmenu(id) {
+        const menu = document.getElementById(id);
+        const icon = document.getElementById(id + 'Icon');
+        menu.classList.toggle('hidden');
+        if (icon) {
+            icon.classList.toggle('rotate-180');
+        }
+    }
+
+    // Sidebar Mobile Toggle
+    const sidebar = document.getElementById('mainSidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const toggle = document.getElementById('sidebarToggle');
+
+    if (toggle) {
+        toggle.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        });
+    }
+
+    if (overlay) {
+        overlay.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
+        });
+    }
+</script>

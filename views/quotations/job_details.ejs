@@ -1,0 +1,313 @@
+<%- include('../partials/layout_start') %>
+
+    <div class="mb-8 flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">รายละเอียดและวิธีทำบริการ</h1>
+            <p class="text-slate-500 mt-1 font-medium">Quotation No: <%= quotation.quotation_no %>
+            </p>
+        </div>
+        <div>
+            <a href="/quotations/edit/<%= quotation.id %>"
+                class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-2 px-4 rounded-xl transition-all">
+                <i class="fa-solid fa-arrow-left mr-2"></i> กลับ
+            </a>
+        </div>
+    </div>
+
+    <form action="/quotations/job-details/<%= quotation.id %>" method="POST">
+        <div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden">
+            <div class="overflow-x-auto p-4">
+                <table class="w-full text-left border-collapse" id="jobTable">
+                    <thead>
+                        <tr class="bg-slate-50/50 text-slate-600 text-sm">
+                            <th class="p-4 rounded-tl-xl w-1/6">หัวข้อ (Title)</th>
+                            <th class="p-4 w-1/6">วิธีการ (Method)</th>
+                            <th class="p-4 w-1/4">รายละเอียด (Description)</th>
+                            <th class="p-4 w-24 text-center">ความถี่ (ครั้ง)</th>
+                            <th class="p-4 w-32 text-center">ต่อหน่วย</th>
+                            <th class="p-4 w-24 text-center">รอบ</th>
+                            <th class="p-4 w-16 rounded-tr-xl"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50" id="jobTableBody">
+                        <% if (jobLines && jobLines.length> 0) { %>
+                            <% jobLines.forEach((line, index)=> { %>
+                                <tr class="group hover:bg-slate-50/50 transition-all">
+                                    <td class="p-2 align-top">
+                                        <input type="hidden" name="lines[<%= index %>][id]" value="<%= line.id %>">
+                                        <select name="lines[<%= index %>][task_id]"
+                                            class="w-full p-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-emerald-500 outline-none task-select"
+                                            onchange="loadMethods(this)">
+                                            <option value="">-- เลือกหัวข้อ --</option>
+                                            <% tasks.forEach(t=> { %>
+                                                <option value="<%= t.id %>" <%=line.task_job_id==t.id ? 'selected' : ''
+                                                    %>><%= t.title %>
+                                                </option>
+                                                <% }) %>
+                                        </select>
+                                        <input type="hidden" name="lines[<%= index %>][title]" class="task-title-input"
+                                            value="<%= line.title %>">
+                                    </td>
+                                    <td class="p-2 align-top">
+                                        <select name="lines[<%= index %>][method_id]"
+                                            class="w-full p-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-emerald-500 outline-none method-select"
+                                            onchange="loadMethodDetail(this)">
+                                            <option value="">-- เลือกวิธีการ --</option>
+                                            <!-- Dynamically populated -->
+                                            <% if (line.methods) { %>
+                                                <% line.methods.forEach(m=> { %>
+                                                    <option value="<%= m.id %>" <%=line.task_job_method_id==m.id
+                                                        ? 'selected' : '' %>><%= m.task_method_name %>
+                                                    </option>
+                                                    <% }) %>
+                                                        <% } %>
+                                        </select>
+                                    </td>
+                                    <td class="p-2 align-top">
+                                        <textarea name="lines[<%= index %>][description]" rows="2"
+                                            class="w-full p-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-emerald-500 outline-none method-desc"><%= line.description %></textarea>
+                                    </td>
+                                    <td class="p-2 align-top">
+                                        <input type="number" name="lines[<%= index %>][job_count]"
+                                            value="<%= line.job_count %>"
+                                            class="w-full p-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-emerald-500 outline-none text-center">
+                                    </td>
+                                    <td class="p-2 align-top">
+                                        <select name="lines[<%= index %>][interval_type]"
+                                            class="w-full p-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-emerald-500 outline-none">
+                                            <option value="">-- เลือก --</option>
+                                            <% intervalTypes.forEach(type=> { %>
+                                                <option value="<%= type.id %>" <%=line.interval_type==type.id
+                                                    ? 'selected' : '' %>><%= type.name %>
+                                                </option>
+                                                <% }) %>
+                                        </select>
+                                    </td>
+                                    <td class="p-2 align-top">
+                                        <input type="number" name="lines[<%= index %>][job_interval]"
+                                            value="<%= line.job_interval %>"
+                                            class="w-full p-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-emerald-500 outline-none text-center">
+                                    </td>
+                                    <td class="p-2 align-top text-center">
+                                        <button type="button" onclick="removeRow(this)"
+                                            class="text-slate-300 hover:text-rose-500 transition-colors p-2">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                                    <% } else { %>
+                                        <!-- Empty State / Initial Row -->
+                                        <tr class="group hover:bg-slate-50/50 transition-all">
+                                            <td class="p-2 align-top">
+                                                <select name="lines[0][task_id]"
+                                                    class="w-full p-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-emerald-500 outline-none task-select"
+                                                    onchange="loadMethods(this)">
+                                                    <option value="">-- เลือกหัวข้อ --</option>
+                                                    <% tasks.forEach(t=> { %>
+                                                        <option value="<%= t.id %>">
+                                                            <%= t.title %>
+                                                        </option>
+                                                        <% }) %>
+                                                </select>
+                                                <input type="hidden" name="lines[0][title]" class="task-title-input">
+                                            </td>
+                                            <td class="p-2 align-top">
+                                                <select name="lines[0][method_id]"
+                                                    class="w-full p-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-emerald-500 outline-none method-select"
+                                                    onchange="loadMethodDetail(this)">
+                                                    <option value="">-- เลือกวิธีการ --</option>
+                                                </select>
+                                            </td>
+                                            <td class="p-2 align-top">
+                                                <textarea name="lines[0][description]" rows="2"
+                                                    class="w-full p-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-emerald-500 outline-none method-desc"></textarea>
+                                            </td>
+                                            <td class="p-2 align-top">
+                                                <input type="number" name="lines[0][job_count]"
+                                                    class="w-full p-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-emerald-500 outline-none text-center">
+                                            </td>
+                                            <td class="p-2 align-top">
+                                                <select name="lines[0][interval_type]"
+                                                    class="w-full p-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-emerald-500 outline-none">
+                                                    <option value="">-- เลือก --</option>
+                                                    <% intervalTypes.forEach(type=> { %>
+                                                        <option value="<%= type.id %>">
+                                                            <%= type.name %>
+                                                        </option>
+                                                        <% }) %>
+                                                </select>
+                                            </td>
+                                            <td class="p-2 align-top">
+                                                <input type="number" name="lines[0][job_interval]"
+                                                    class="w-full p-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-emerald-500 outline-none text-center">
+                                            </td>
+                                            <td class="p-2 align-top text-center">
+                                                <button type="button" onclick="removeRow(this)"
+                                                    class="text-slate-300 hover:text-rose-500 transition-colors p-2">
+                                                    <i class="fa-solid fa-trash-can"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <% } %>
+                    </tbody>
+                </table>
+                <div class="p-4">
+                    <button type="button" onclick="addJobRow()"
+                        class="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 font-bold py-2 px-4 rounded-xl transition-all text-sm flex items-center space-x-2">
+                        <i class="fa-solid fa-plus"></i> <span>เพิ่มรายการ</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-6 flex justify-end gap-3">
+            <a href="/quotations/edit/<%= quotation.id %>"
+                class="bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 font-bold py-3 px-6 rounded-2xl transition-all">ยกเลิก</a>
+            <button type="submit"
+                class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-2xl shadow-lg shadow-emerald-200 transition-all">บันทึกข้อมูล</button>
+        </div>
+    </form>
+
+    <!-- Template for new row -->
+    <template id="rowTemplate">
+        <tr class="group hover:bg-slate-50/50 transition-all">
+            <td class="p-2 align-top">
+                <select name="lines[{index}][task_id]"
+                    class="w-full p-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-emerald-500 outline-none task-select"
+                    onchange="loadMethods(this)" required>
+                    <option value="">-- เลือกหัวข้อ --</option>
+                    <% tasks.forEach(t=> { %>
+                        <option value="<%= t.id %>">
+                            <%= t.title %>
+                        </option>
+                        <% }) %>
+                </select>
+                <input type="hidden" name="lines[{index}][title]" class="task-title-input">
+            </td>
+            <td class="p-2 align-top">
+                <select name="lines[{index}][method_id]"
+                    class="w-full p-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-emerald-500 outline-none method-select"
+                    onchange="loadMethodDetail(this)">
+                    <option value="">-- เลือกวิธีการ --</option>
+                </select>
+            </td>
+            <td class="p-2 align-top">
+                <textarea name="lines[{index}][description]" rows="2"
+                    class="w-full p-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-emerald-500 outline-none method-desc"></textarea>
+            </td>
+            <td class="p-2 align-top">
+                <input type="number" name="lines[{index}][job_count]"
+                    class="w-full p-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-emerald-500 outline-none text-center">
+            </td>
+            <td class="p-2 align-top">
+                <select name="lines[{index}][interval_type]"
+                    class="w-full p-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-emerald-500 outline-none">
+                    <option value="">-- เลือก --</option>
+                    <% intervalTypes.forEach(type=> { %>
+                        <option value="<%= type.id %>">
+                            <%= type.name %>
+                        </option>
+                        <% }) %>
+                </select>
+            </td>
+            <td class="p-2 align-top">
+                <input type="number" name="lines[{index}][job_interval]"
+                    class="w-full p-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-emerald-500 outline-none text-center">
+            </td>
+            <td class="p-2 align-top text-center">
+                <button type="button" onclick="removeRow(this)"
+                    class="text-slate-300 hover:text-rose-500 transition-colors p-2">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </td>
+        </tr>
+    </template>
+
+    <script>
+        // Initialize rowCount safely
+        let rowCount = <%= (jobLines && jobLines.length > 0) ? jobLines.length : 1 %>;
+
+        // Function to add a new row
+        function addJobRow() {
+            try {
+                const template = document.getElementById('rowTemplate').innerHTML;
+                const newRowHtml = template.replace(/{index}/g, rowCount);
+
+                const tableBody = document.getElementById('jobTableBody');
+                if (tableBody) {
+                    tableBody.insertAdjacentHTML('beforeend', newRowHtml);
+                    rowCount++;
+                } else {
+                    console.error('Table body element not found');
+                }
+            } catch (e) {
+                console.error('Error adding row:', e);
+                alert('เกิดข้อผิดพลาดในการเพิ่มรายการ');
+            }
+        }
+
+        function removeRow(btn) {
+            const row = btn.closest('tr');
+            if (document.querySelectorAll('#jobTableBody tr').length > 1) {
+                row.remove();
+            } else {
+                // Clear inputs if it's the last row
+                row.querySelectorAll('input, textarea, select').forEach(input => input.value = '');
+            }
+        }
+
+        function loadMethods(selectElement) {
+            const taskId = selectElement.value;
+            const row = selectElement.closest('tr');
+            const methodSelect = row.querySelector('.method-select');
+            const titleInput = row.querySelector('.task-title-input');
+
+            // Set Hidden Title Input
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            if (selectedOption.value) {
+                titleInput.value = selectedOption.text;
+            } else {
+                titleInput.value = '';
+            }
+
+            // Clear methods
+            methodSelect.innerHTML = '<option value="">-- เลือกวิธีการ --</option>';
+
+            if (!taskId) return;
+
+            // Fetch methods via API
+            fetch(`/quotations/api/methods/${taskId}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(method => {
+                        const option = document.createElement('option');
+                        option.value = method.id;
+                        option.textContent = method.task_method_name;
+                        // Store description in data attribute to avoid another fetch
+                        option.dataset.description = method.description || '';
+                        methodSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching methods:', error));
+        }
+
+        function loadMethodDetail(selectElement) {
+            const row = selectElement.closest('tr');
+            const descInput = row.querySelector('.method-desc');
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+
+            if (selectedOption && selectedOption.dataset.description) {
+                descInput.value = selectedOption.dataset.description;
+            } else if (selectedOption.value) {
+                // Fallback if description not in dataset (e.g. page load) - actually we should fetch
+                fetch(`/quotations/api/method-detail/${selectedOption.value}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.description) descInput.value = data.description;
+                    });
+            }
+        }
+    </script>
+
+    <%- include('../partials/layout_end') %>

@@ -1,0 +1,213 @@
+<%- include('../partials/layout_start') %>
+
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">พนักงาน</h1>
+            <p class="text-slate-500 mt-1 font-medium">จัดการข้อมูลพนักงานในระบบ</p>
+        </div>
+        <button onclick="openAddModal()"
+            class="flex items-center justify-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-2xl shadow-lg shadow-indigo-200 transition-all active:scale-95 font-bold">
+            <i class="fa-solid fa-plus text-sm"></i>
+            <span>เพิ่มพนักงาน</span>
+        </button>
+    </div>
+
+    <div class="bg-white rounded-[2rem] shadow-sm border border-indigo-50 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-indigo-50/50">
+                        <th class="px-6 py-5 text-indigo-800 font-bold text-sm uppercase tracking-wider">รหัส</th>
+                        <th class="px-6 py-5 text-indigo-800 font-bold text-sm uppercase tracking-wider">ชื่อ-นามสกุล
+                        </th>
+                        <th class="px-6 py-5 text-indigo-800 font-bold text-sm uppercase tracking-wider">ตำแหน่ง
+                        </th>
+                        <th class="px-6 py-5 text-indigo-800 font-bold text-sm uppercase tracking-wider">เพศ
+                        </th>
+                        <th class="px-6 py-5 text-indigo-800 font-bold text-sm uppercase tracking-wider">วันที่เริ่มงาน
+                        </th>
+                        <th class="px-6 py-5 text-indigo-800 font-bold text-sm uppercase tracking-wider text-right">
+                            จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-indigo-50">
+                    <% employees.forEach(emp=> { %>
+                        <tr class="hover:bg-indigo-50/30 transition-colors group">
+                            <td class="px-6 py-5">
+                                <span
+                                    class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-lg text-xs font-bold ring-1 ring-indigo-200">
+                                    <%= emp.code %>
+                                </span>
+                            </td>
+                            <td class="px-6 py-5 font-bold text-slate-700">
+                                <%= emp.fname %>
+                                    <%= emp.lname %>
+                            </td>
+                            <td class="px-6 py-5 text-slate-600">
+                                <%= emp.position_name || '-' %>
+                            </td>
+                            <td class="px-6 py-5 text-slate-600">
+                                <% if (emp.gender===1) { %>
+                                    <span class="text-blue-600">ชาย</span>
+                                    <% } else if (emp.gender===2) { %>
+                                        <span class="text-pink-600">หญิง</span>
+                                        <% } else { %>
+                                            <span class="text-slate-400">-</span>
+                                            <% } %>
+                            </td>
+                            <td class="px-6 py-5 text-slate-600 text-sm">
+                                <%= emp.emp_start ? new Date(emp.emp_start).toLocaleDateString('th-TH') : '-' %>
+                            </td>
+                            <td class="px-6 py-5 text-right">
+                                <div
+                                    class="flex justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button onclick='openEditModal(<%- JSON.stringify(emp) %>)'
+                                        class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 transition-all">
+                                        <i class="fa-solid fa-pen-to-square text-sm"></i>
+                                    </button>
+                                    <a href="/employees/delete/<%= emp.id %>"
+                                        onclick="return confirm('ยืนยันการลบข้อมูล?')"
+                                        class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 transition-all">
+                                        <i class="fa-solid fa-trash-can text-sm"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <% }) %>
+                            <% if (employees.length===0) { %>
+                                <tr>
+                                    <td colspan="6" class="px-6 py-20 text-center text-slate-400">
+                                        <i class="fa-solid fa-folder-open text-5xl mb-4 opacity-20 block"></i>
+                                        <span class="font-medium">ไม่พบข้อมูลพนักงาน</span>
+                                    </td>
+                                </tr>
+                                <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <%- include('../partials/pagination') %>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div id="modal"
+        class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+        <div
+            class="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div class="p-8 border-b border-slate-50 flex justify-between items-center">
+                <h3 id="modalTitle" class="text-2xl font-black text-slate-800">เพิ่มพนักงาน</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <form id="modalForm" method="POST" action="/employees/add" class="p-8 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-1">รหัสพนักงาน</label>
+                        <input type="text" name="code" id="empCode" required
+                            class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-indigo-500 focus:bg-white rounded-2xl outline-none transition-all font-medium"
+                            placeholder="เช่น EMP-001">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-1">ตำแหน่งงาน</label>
+                        <select name="position" id="empPosition"
+                            class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-indigo-500 focus:bg-white rounded-2xl outline-none transition-all font-medium">
+                            <option value="">-- เลือกตำแหน่ง --</option>
+                            <% positions.forEach(pos=> { %>
+                                <option value="<%= pos.id %>">
+                                    <%= pos.name %>
+                                </option>
+                                <% }) %>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-1">ชื่อ</label>
+                        <input type="text" name="fname" id="empFname" required
+                            class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-indigo-500 focus:bg-white rounded-2xl outline-none transition-all font-medium"
+                            placeholder="ชื่อพนักงาน">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-1">นามสกุล</label>
+                        <input type="text" name="lname" id="empLname" required
+                            class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-indigo-500 focus:bg-white rounded-2xl outline-none transition-all font-medium"
+                            placeholder="นามสกุลพนักงาน">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-1">เพศ</label>
+                        <select name="gender" id="empGender"
+                            class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-indigo-500 focus:bg-white rounded-2xl outline-none transition-all font-medium">
+                            <option value="">-- เลือกเพศ --</option>
+                            <option value="1">ชาย</option>
+                            <option value="2">หญิง</option>
+                        </select>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-1">ประเภทเงินเดือน</label>
+                        <select name="salary_type" id="empSalaryType"
+                            class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-indigo-500 focus:bg-white rounded-2xl outline-none transition-all font-medium">
+                            <option value="">-- เลือกประเภท --</option>
+                            <option value="1">รายเดือน</option>
+                            <option value="2">รายวัน</option>
+                        </select>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-1">วันที่เริ่มงาน</label>
+                        <input type="date" name="emp_start" id="empStart"
+                            class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-indigo-500 focus:bg-white rounded-2xl outline-none transition-all font-medium">
+                    </div>
+                </div>
+
+                <div class="flex space-x-4 pt-4">
+                    <button type="button" onclick="closeModal()"
+                        class="flex-1 px-8 py-4 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl font-bold transition-colors">ยกเลิก</button>
+                    <button type="submit"
+                        class="flex-1 px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold shadow-lg shadow-indigo-100 transition-all active:scale-95">บันทึกข้อมูล</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('modal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalForm = document.getElementById('modalForm');
+
+        function openAddModal() {
+            modalTitle.innerText = 'เพิ่มพนักงาน';
+            modalForm.action = '/employees/add';
+            document.getElementById('empCode').value = '';
+            document.getElementById('empFname').value = '';
+            document.getElementById('empLname').value = '';
+            document.getElementById('empPosition').value = '';
+            document.getElementById('empGender').value = '';
+            document.getElementById('empSalaryType').value = '';
+            document.getElementById('empStart').value = '';
+            modal.classList.remove('hidden');
+        }
+
+        function openEditModal(emp) {
+            modalTitle.innerText = 'แก้ไขข้อมูลพนักงาน';
+            modalForm.action = `/employees/edit/${emp.id}`;
+            document.getElementById('empCode').value = emp.code;
+            document.getElementById('empFname').value = emp.fname;
+            document.getElementById('empLname').value = emp.lname;
+            document.getElementById('empPosition').value = emp.position || '';
+            document.getElementById('empGender').value = emp.gender || '';
+            document.getElementById('empSalaryType').value = emp.salary_type || '';
+            document.getElementById('empStart').value = emp.emp_start ? emp.emp_start.split('T')[0] : '';
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+        }
+    </script>
+
+    <%- include('../partials/layout_end') %>

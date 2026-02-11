@@ -1,0 +1,96 @@
+<%- include('../partials/layout_start') %>
+
+    <div class="mb-8">
+        <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">รายงานการขาย</h1>
+        <p class="text-slate-500 mt-1 font-medium">ภาพรวมยอดขายสรุปตามใบเสนอราคา</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 p-8 mb-8">
+        <form action="/reports/sales" method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+            <div class="space-y-2">
+                <label
+                    class="block text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">ตั้งแต่วันที่</label>
+                <input type="date" name="start_date" value="<%= filters.start_date %>"
+                    class="w-full px-5 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all">
+            </div>
+            <div class="space-y-2">
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">ถึงวันที่</label>
+                <input type="date" name="end_date" value="<%= filters.end_date %>"
+                    class="w-full px-5 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all">
+            </div>
+            <div class="flex space-x-2">
+                <button type="submit"
+                    class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-emerald-100 transition-all active:scale-95">
+                    ค้นหา
+                </button>
+                <a href="/reports/sales"
+                    class="flex items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-3 px-6 rounded-xl transition-all">
+                    ล้างค่า
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-slate-50/50">
+                    <tr>
+                        <th class="px-8 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest">วันที่</th>
+                        <th class="px-4 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest">
+                            เลขที่ใบเสนอราคา</th>
+                        <th class="px-4 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest">ลูกค้า</th>
+                        <th class="px-4 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest text-right">
+                            จำนวนเงินรวม</th>
+                        <th class="px-8 py-5 text-center text-slate-400 font-bold text-xs uppercase tracking-widest">
+                            สถานะ</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    <% if (items.length===0) { %>
+                        <tr>
+                            <td colspan="5" class="px-8 py-20 text-center text-slate-400 font-medium">
+                                ไม่พบข้อมูลการขายในช่วงเวลานี้</td>
+                        </tr>
+                        <% } %>
+                            <% items.forEach(item=> { %>
+                                <tr class="hover:bg-slate-50/50 transition-all">
+                                    <td class="px-8 py-6 text-slate-500 text-sm">
+                                        <%= item.quotation_date ? new
+                                            Date(item.quotation_date).toLocaleDateString('th-TH') : '-' %>
+                                    </td>
+                                    <td class="px-4 py-6 font-bold text-slate-700">
+                                        <%= item.quotation_no %>
+                                    </td>
+                                    <td class="px-4 py-6 text-slate-600 text-sm">
+                                        <%= item.customer_name %>
+                                    </td>
+                                    <td class="px-4 py-6 text-right font-bold text-slate-800">
+                                        <%= item.total.toLocaleString(undefined, { minimumFractionDigits: 2 }) %>
+                                    </td>
+                                    <td class="px-8 py-6 text-center">
+                                        <span
+                                            class="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ring-1 ring-emerald-100">Confirmed</span>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                </tbody>
+                <% if (items.length> 0) { %>
+                    <tfoot class="bg-slate-50/30">
+                        <tr class="font-black">
+                            <td colspan="3" class="px-8 py-6 text-right text-slate-500 text-sm uppercase">ยอดรวมทั้งหมด
+                                (Total)</td>
+                            <td class="px-4 py-6 text-right text-indigo-600 text-xl">
+                                <%= items.reduce((sum, item)=> sum + (item.total || 0), 0).toLocaleString(undefined, {
+                                    minimumFractionDigits: 2 }) %>
+                            </td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                    <% } %>
+            </table>
+        </div>
+    </div>
+
+    <%- include('../partials/layout_end') %>

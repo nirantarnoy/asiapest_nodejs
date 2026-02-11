@@ -1,0 +1,154 @@
+<%- include('../partials/layout_start') %>
+
+    <div class="mb-8">
+        <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Import Master Data</h1>
+        <p class="text-slate-500 mt-1 font-medium">นำเข้าข้อมูลพื้นฐานด้วยไฟล์ Excel (.xlsx)</p>
+    </div>
+
+    <% if (msg) { %>
+        <div
+            class="mb-6 p-4 bg-emerald-50 border border-emerald-100 text-emerald-700 rounded-2xl flex items-center animate-in fade-in slide-in-from-top-4">
+            <i class="fa-solid fa-circle-check mr-3"></i>
+            <span class="font-bold text-sm">
+                <%= msg %>
+            </span>
+        </div>
+        <% } %>
+
+            <% if (error) { %>
+                <div
+                    class="mb-6 p-4 bg-rose-50 border border-rose-100 text-rose-700 rounded-2xl flex items-center animate-in fade-in slide-in-from-top-4">
+                    <i class="fa-solid fa-triangle-exclamation mr-3"></i>
+                    <span class="font-bold text-sm">
+                        <%= error %>
+                    </span>
+                </div>
+                <% } %>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pb-20">
+                        <!-- Import Customer -->
+                        <div
+                            class="bg-white rounded-[2.5rem] shadow-sm border border-emerald-50 p-8 hover:shadow-xl hover:shadow-emerald-100/20 transition-all group">
+                            <div class="flex items-center space-x-4 mb-6">
+                                <div
+                                    class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center text-emerald-600 transition-transform group-hover:rotate-12">
+                                    <i class="fa-solid fa-users text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-slate-800">นำเข้าข้อมูลลูกค้า</h3>
+                                    <p class="text-xs text-slate-400">Customer Import (Excel)</p>
+                                </div>
+                            </div>
+                            <form action="/import-master/customer" method="POST" enctype="multipart/form-data"
+                                class="space-y-4">
+                                <div class="relative">
+                                    <input type="file" name="file_customer" accept=".xlsx" required
+                                        class="block w-full text-sm text-slate-500 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 transition-all border-2 border-dashed border-emerald-50 rounded-2xl p-2 cursor-pointer">
+                                </div>
+                                <button type="submit"
+                                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-emerald-100 transition-all active:scale-95 flex items-center justify-center space-x-2">
+                                    <i class="fa-solid fa-upload"></i>
+                                    <span>เริ่มนำเข้าข้อมูล</span>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Import Employee -->
+                        <div
+                            class="bg-white rounded-[2.5rem] shadow-sm border border-emerald-50 p-8 hover:shadow-xl hover:shadow-emerald-100/20 transition-all group">
+                            <div class="flex items-center space-x-4 mb-6">
+                                <div
+                                    class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 transition-transform group-hover:rotate-12">
+                                    <i class="fa-solid fa-id-badge text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-slate-800">นำเข้าข้อมูลพนักงาน</h3>
+                                    <p class="text-xs text-slate-400">Employee Import (Excel)</p>
+                                </div>
+                            </div>
+                            <form action="/import-master/employee" method="POST" enctype="multipart/form-data"
+                                class="space-y-4">
+                                <div class="relative">
+                                    <input type="file" name="file_employee" accept=".xlsx" required
+                                        class="block w-full text-sm text-slate-500 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all border-2 border-dashed border-blue-50 rounded-2xl p-2 cursor-pointer">
+                                </div>
+                                <button type="submit"
+                                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-100 transition-all active:scale-95 flex items-center justify-center space-x-2">
+                                    <i class="fa-solid fa-upload"></i>
+                                    <span>เริ่มนำเข้าข้อมูล</span>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Import Product -->
+                        <div
+                            class="bg-white rounded-[2.5rem] shadow-sm border border-emerald-50 p-8 hover:shadow-xl hover:shadow-emerald-100/20 transition-all group">
+                            <div class="flex items-center space-x-4 mb-6">
+                                <div
+                                    class="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center text-indigo-600 transition-transform group-hover:rotate-12">
+                                    <i class="fa-solid fa-box-open text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-slate-800">นำเข้าข้อมูลสินค้า</h3>
+                                    <p class="text-xs text-slate-400">Product Import (Excel)</p>
+                                </div>
+                            </div>
+                            <form action="/import-master/product" method="POST" enctype="multipart/form-data"
+                                class="space-y-4">
+                                <div class="relative">
+                                    <input type="file" name="file_product" accept=".xlsx" required
+                                        class="block w-full text-sm text-slate-500 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition-all border-2 border-dashed border-indigo-50 rounded-2xl p-2 cursor-pointer">
+                                </div>
+                                <button type="submit"
+                                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-indigo-100 transition-all active:scale-95 flex items-center justify-center space-x-2">
+                                    <i class="fa-solid fa-upload"></i>
+                                    <span>เริ่มนำเข้าข้อมูล</span>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Template Downloads -->
+                        <div
+                            class="bg-white rounded-[2.5rem] shadow-sm border border-emerald-50 p-8 relative overflow-hidden flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-xl font-bold mb-2 text-slate-800">ดาวน์โหลดไฟล์ตัวอย่าง</h3>
+                                <p class="text-slate-500 text-sm mb-6">Download Excel templates to ensure correct data
+                                    formatting.</p>
+                                <div class="grid grid-cols-1 gap-3">
+                                    <a href="/import-master/export-customer-pattern"
+                                        class="bg-emerald-50 hover:bg-emerald-100 p-4 rounded-2xl flex items-center space-x-4 transition-all group/item">
+                                        <div
+                                            class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-emerald-600 shadow-sm transition-transform group-hover/item:scale-110">
+                                            <i class="fa-solid fa-file-excel"></i>
+                                        </div>
+                                        <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Customer
+                                            Pattern (.xlsx)</span>
+                                    </a>
+                                    <a href="/import-master/export-employee-pattern"
+                                        class="bg-blue-50 hover:bg-blue-100 p-4 rounded-2xl flex items-center space-x-4 transition-all group/item">
+                                        <div
+                                            class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-blue-600 shadow-sm transition-transform group-hover/item:scale-110">
+                                            <i class="fa-solid fa-file-excel"></i>
+                                        </div>
+                                        <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Employee
+                                            Pattern (.xlsx)</span>
+                                    </a>
+                                    <a href="/import-master/export-product-pattern"
+                                        class="bg-indigo-50 hover:bg-indigo-100 p-4 rounded-2xl flex items-center space-x-4 transition-all group/item">
+                                        <div
+                                            class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-indigo-600 shadow-sm transition-transform group-hover/item:scale-110">
+                                            <i class="fa-solid fa-file-excel"></i>
+                                        </div>
+                                        <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Product
+                                            Pattern (.xlsx)</span>
+                                    </a>
+                                </div>
+                            </div>
+                            <div
+                                class="mt-8 pt-6 border-t border-slate-100 text-[10px] uppercase font-black tracking-widest text-slate-400">
+                                Excel (.xlsx) formatting guidelines apply
+                            </div>
+                        </div>
+                    </div>
+
+                    <%- include('../partials/layout_end') %>

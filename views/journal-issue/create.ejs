@@ -1,0 +1,117 @@
+<%- include('../partials/layout_start') %>
+
+    <div class="mb-8">
+        <a href="/journal-issue"
+            class="text-slate-400 hover:text-amber-600 transition-colors flex items-center mb-4 group">
+            <i class="fa-solid fa-arrow-left mr-2 group-hover:-translate-x-1 transition-transform"></i>
+            <span class="font-bold text-sm uppercase tracking-widest">กลับไปหน้ารายการ</span>
+        </a>
+        <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">บันทึกการเบิกสินค้า</h1>
+        <p class="text-slate-500 mt-1 font-medium">ทำรายการเบิกสินค้าออกจากคลัง</p>
+    </div>
+
+    <form action="/journal-issue/create" method="POST" class="space-y-8 pb-20">
+        <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Employee Selection Removed as it is not supported in DB Schema, using current user as Requester implicitly -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">ผู้ทำรายการ</label>
+                    <div class="w-full px-5 py-4 bg-slate-100 border border-slate-100 rounded-2xl text-slate-500">
+                        <%= user.username %>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">วันที่เบิกสินค้า</label>
+                    <input type="date" name="issue_date" value="<%= new Date().toISOString().split('T')[0] %>" required
+                        class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all">
+                </div>
+            </div>
+            <div class="mt-8 space-y-2">
+                <label class="block text-sm font-bold text-slate-700 ml-1">หมายเหตุ / วัตถุประสงค์การเบิก</label>
+                <textarea name="note" rows="2"
+                    class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all"></textarea>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+            <div class="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
+                <h3 class="text-xl font-bold text-slate-800">รายการสินค้าที่เบิก</h3>
+                <button type="button" id="addLineBtn"
+                    class="bg-amber-50 text-amber-700 hover:bg-amber-100 font-bold py-2 px-4 rounded-xl transition-all flex items-center space-x-2">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>เพิ่มรายการ</span>
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left" id="linesTable">
+                    <thead class="bg-slate-50/50">
+                        <tr>
+                            <th class="px-8 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest">สินค้า</th>
+                            <th
+                                class="px-4 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest w-48 text-center">
+                                จำนวนที่เบิก</th>
+                            <th class="px-8 py-5 text-right w-20"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50">
+                        <!-- Lines injected here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="flex justify-end pt-4">
+            <button type="submit"
+                class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-5 px-12 rounded-[2rem] shadow-xl shadow-emerald-500/20 transition-all hover:scale-[1.02] active:scale-95 flex items-center space-x-3">
+                <i class="fa-solid fa-floppy-disk"></i>
+                <span>บันทึกการเบิกสินค้า</span>
+            </button>
+        </div>
+    </form>
+
+    <template id="lineRowTemplate">
+        <tr class="group hover:bg-slate-50/50 transition-all">
+            <td class="px-8 py-4">
+                <select name="lines[{index}][product_id]"
+                    class="product-select w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all text-sm"
+                    required>
+                    <option value="">เลือกสินค้า...</option>
+                    <% products.forEach(p=> { %>
+                        <option value="<%= p.id %>">
+                            <%= p.code %> - <%= p.name %>
+                        </option>
+                        <% }) %>
+                </select>
+            </td>
+            <td class="px-4 py-4">
+                <input type="number" name="lines[{index}][qty]" step="any" value="1"
+                    class="qty-input w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm text-center"
+                    required>
+            </td>
+            <td class="px-8 py-4 text-right">
+                <button type="button" onclick="this.closest('tr').remove()"
+                    class="text-slate-300 hover:text-rose-500 transition-colors">
+                    <i class="fa-solid fa-circle-xmark text-lg"></i>
+                </button>
+            </td>
+        </tr>
+    </template>
+
+    <script>
+        let lineCount = 0;
+        const template = document.getElementById('lineRowTemplate').innerHTML;
+        const tableBody = document.querySelector('#linesTable tbody');
+
+        function addLine() {
+            const row = template.replace(/{index}/g, lineCount);
+            tableBody.insertAdjacentHTML('beforeend', row);
+            lineCount++;
+        }
+
+        document.getElementById('addLineBtn').addEventListener('click', () => addLine());
+
+        // Initial line
+        addLine();
+    </script>
+
+    <%- include('../partials/layout_end') %>

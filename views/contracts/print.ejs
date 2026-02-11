@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contract - <%= contract.contract_no %>
+    </title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&family=Prompt:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            .no-print {
+                display: none;
+            }
+
+            @page {
+                size: A4;
+                margin: 1.5cm;
+            }
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            color: #334155;
+        }
+
+        h1,
+        h2,
+        h3,
+        .brand-font {
+            font-family: 'Prompt', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 print:bg-white min-h-screen p-8">
+    <div class="max-w-[21cm] mx-auto bg-white p-[1cm] shadow-xl print:shadow-none print:p-0">
+        <!-- Floating Print Button -->
+        <div class="no-print flex justify-end space-x-3 mb-8">
+            <button onclick="window.print()"
+                class="bg-emerald-600 text-white px-6 py-2 rounded-xl font-bold shadow-lg hover:bg-emerald-700 transition-all flex items-center space-x-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                <span>พิมพ์สัญญา</span>
+            </button>
+            <button onclick="window.close()"
+                class="bg-white border border-gray-200 px-6 py-2 rounded-xl font-bold hover:bg-gray-50 transition-all">
+                ปิดหน้าต่าง
+            </button>
+        </div>
+
+        <!-- Header -->
+        <div class="flex justify-between items-start border-b-2 border-emerald-500 pb-6 mb-8">
+            <div class="flex items-center space-x-4">
+                <div
+                    class="w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center text-white text-3xl font-black">
+                    AP</div>
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-800 tracking-tight">
+                        <%= company.name %>
+                    </h1>
+                    <p class="text-sm text-slate-500 max-w-sm">
+                        <%= company.address %>
+                    </p>
+                    <p class="text-sm text-slate-500">โทร: <%= company.phone %> | เว็บไซต์: <%= company.website %>
+                    </p>
+                </div>
+            </div>
+            <div class="text-right">
+                <h2 class="text-3xl font-black text-emerald-600 uppercase tracking-tighter">SERVICE CONTRACT</h2>
+                <p class="text-sm font-bold text-slate-400 mt-1 uppercase">สัญญาการเข้าบริการ</p>
+                <div class="mt-4 bg-emerald-50 p-3 rounded-xl inline-block text-left border border-emerald-100">
+                    <p class="text-[10px] text-emerald-600 uppercase font-black tracking-widest leading-none mb-1">
+                        CONTRACT NUMBER</p>
+                    <p class="text-lg font-bold text-slate-800 leading-none tabular-nums">
+                        <%= contract.contract_no %>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Grid -->
+        <div class="grid grid-cols-2 gap-12 mb-10">
+            <div>
+                <h3 class="text-xs font-black text-emerald-600 uppercase tracking-widest mb-3 flex items-center">
+                    <span class="w-6 h-px bg-emerald-200 mr-2"></span>
+                    Customer / ลูกค้า
+                </h3>
+                <div class="space-y-1">
+                    <p class="text-lg font-bold text-slate-900">
+                        <%= contract.customer_name %>
+                    </p>
+                    <p class="text-sm text-slate-500 leading-relaxed">
+                        <%= contract.customer_address %>
+                    </p>
+                    <div class="flex items-center space-x-4 mt-2">
+                        <p class="text-sm font-medium text-slate-700 bg-slate-100 px-2 py-1 rounded">โทร: <%=
+                                contract.customer_phone || '-' %>
+                        </p>
+                    </div>
+                    <p class="text-sm font-medium text-slate-500 mt-1">เลขประจำตัวผู้เสียภาษี: <%=
+                            contract.customer_tax_id || '-' %>
+                    </p>
+                    <p class="text-sm font-medium text-slate-500">ผู้ติดต่อ: <%= contract.customer_contact_name || '-'
+                            %>
+                    </p>
+                </div>
+            </div>
+            <div>
+                <h3
+                    class="text-xs font-black text-emerald-600 uppercase tracking-widest mb-3 flex items-center justify-end">
+                    Details / รายละเอียดสัญญา
+                    <span class="w-6 h-px bg-emerald-200 ml-2"></span>
+                </h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center text-sm border-b border-gray-50 pb-2">
+                        <span class="text-slate-400 font-medium">ประเภทบริการ:</span>
+                        <span class="text-slate-800 font-bold">
+                            <%= contract.service_type_name || '-' %>
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm border-b border-gray-50 pb-2">
+                        <span class="text-slate-400 font-medium">วันที่ทำสัญญา:</span>
+                        <span class="text-slate-800 font-bold">
+                            <%= contract.contract_date ? new Date(contract.contract_date).toLocaleDateString('th-TH')
+                                : '-' %>
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm border-b border-gray-50 pb-2">
+                        <span class="text-slate-400 font-medium">วันเริ่มสัญญา:</span>
+                        <span class="text-slate-800 font-bold text-emerald-600">
+                            <%= contract.contract_start_date ? new
+                                Date(contract.contract_start_date).toLocaleDateString('th-TH') : '-' %>
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm border-b border-gray-50 pb-2">
+                        <span class="text-slate-400 font-medium">วันสิ้นสุดสัญญา:</span>
+                        <span class="text-slate-800 font-bold text-rose-600">
+                            <%= contract.contract_expire_date ? new
+                                Date(contract.contract_expire_date).toLocaleDateString('th-TH') : '-' %>
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm border-b border-gray-50 pb-2">
+                        <span class="text-slate-400 font-medium">อ้างอิงใบเสนอราคา:</span>
+                        <span class="text-slate-800 font-bold">
+                            <%= contract.quotation_no || '-' %>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Problem / Action Section -->
+        <div class="space-y-6 mb-12">
+            <div>
+                <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-emerald-500 pl-3">ปัญหาที่พบ
+                    (Problem)</h3>
+                <div class="bg-gray-50 p-4 rounded-2xl min-h-[60px] text-sm text-slate-600 border border-gray-100">
+                    <%= contract.problem || 'ไม่ระบุ' %>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-emerald-500 pl-3">สาเหตุ (Cause)
+                    </h3>
+                    <div class="bg-gray-50 p-4 rounded-2xl min-h-[60px] text-sm text-slate-600 border border-gray-100">
+                        <%= contract.problem_cause || 'ไม่ระบุ' %>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-emerald-500 pl-3">การดำเนินการ
+                        (Action)</h3>
+                    <div class="bg-gray-50 p-4 rounded-2xl min-h-[60px] text-sm text-slate-600 border border-gray-100">
+                        <%= contract.taken_action || 'ไม่ระบุ' %>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Signatures -->
+        <div class="mt-20 grid grid-cols-2 gap-20">
+            <div class="text-center">
+                <div class="border-b border-slate-300 mb-3 h-12"></div>
+                <p class="text-sm font-bold text-slate-800 italic">
+                    ลงชื่อ......................................................</p>
+                <p class="text-sm font-bold text-slate-800 mt-2">( <%= contract.customer_name %> )</p>
+                <p class="text-xs text-slate-400 mt-1 uppercase font-bold tracking-widest">Authorized Customer Signature
+                </p>
+            </div>
+            <div class="text-center">
+                <div class="border-b border-slate-300 mb-3 h-12"></div>
+                <p class="text-sm font-bold text-slate-800 italic">
+                    ลงชื่อ......................................................</p>
+                <p class="text-sm font-bold text-slate-800 mt-2">
+                    <%= (contract.sale_fname && contract.sale_lname) ? (contract.sale_fname + ' ' + contract.sale_lname)
+                        : (contract.sale_fname || '( เจ้าหน้าที่ผู้รับผิดชอบ )' ) %>
+                </p>
+                <p class="text-xs text-slate-400 mt-1 uppercase font-bold tracking-widest">AsiaPEST Authorized Officer
+                </p>
+            </div>
+        </div>
+
+        <div class="mt-12 text-center text-sm text-slate-500">
+            <div class="grid grid-cols-2 gap-20">
+                <div class="text-center">
+                    <p>ลงชื่อ...................................................... (พยาน)</p>
+                </div>
+                <div class="text-center">
+                    <p>ลงชื่อ...................................................... (พยาน)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div
+            class="mt-20 border-t border-gray-100 pt-6 text-center text-[10px] text-slate-400 uppercase font-black tracking-[0.2em]">
+            This document is a legally binding service contract Generated by AsiaPEST IMS
+        </div>
+    </div>
+</body>
+
+</html>

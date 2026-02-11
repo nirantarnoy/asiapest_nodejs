@@ -1,0 +1,103 @@
+<%- include('../partials/layout_start') %>
+
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">ประวัติรับเข้า-ออกคลัง</h1>
+            <p class="text-slate-500 mt-1 font-medium">ดูประวัติการเคลื่อนไหวสินค้าในคลัง</p>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-[2rem] shadow-sm border border-amber-50 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-amber-50/50">
+                        <th class="px-6 py-5 text-amber-800 font-bold text-sm uppercase tracking-wider">เลขที่เอกสาร
+                        </th>
+                        <th class="px-6 py-5 text-amber-800 font-bold text-sm uppercase tracking-wider">วันที่</th>
+                        <th class="px-6 py-5 text-amber-800 font-bold text-sm uppercase tracking-wider">รหัสสินค้า</th>
+                        <th class="px-6 py-5 text-amber-800 font-bold text-sm uppercase tracking-wider">ชื่อสินค้า</th>
+                        <th class="px-6 py-5 text-amber-800 font-bold text-sm uppercase tracking-wider text-center">
+                            ประเภท</th>
+                        <th class="px-6 py-5 text-amber-800 font-bold text-sm uppercase tracking-wider text-right">จำนวน
+                        </th>
+                        <th class="px-6 py-5 text-amber-800 font-bold text-sm uppercase tracking-wider text-right">ราคา
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-amber-50">
+                    <% transactions.forEach(trans=> { %>
+                        <tr class="hover:bg-amber-50/30 transition-colors">
+                            <td class="px-6 py-5">
+                                <span
+                                    class="bg-amber-100 text-amber-700 px-3 py-1 rounded-lg text-xs font-bold ring-1 ring-amber-200">
+                                    <%= trans.trans_no || '-' %>
+                                </span>
+                            </td>
+                            <td class="px-6 py-5 text-slate-600 text-sm">
+                                <%= trans.trans_date ? new Date(trans.trans_date).toLocaleDateString('th-TH', {
+                                    year: 'numeric' , month: 'short' , day: 'numeric' }) : '-' %>
+                            </td>
+                            <td class="px-6 py-5 text-slate-600 text-sm font-mono">
+                                <%= trans.product_code || '-' %>
+                            </td>
+                            <td class="px-6 py-5 font-semibold text-slate-700">
+                                <%= trans.product_name || '-' %>
+                            </td>
+                            <td class="px-6 py-5 text-center">
+                                <% if (trans.trans_stock_type===1) { %>
+                                    <span
+                                        class="bg-green-100 text-green-700 px-3 py-1 rounded-lg text-xs font-bold ring-1 ring-green-200">
+                                        รับเข้า
+                                    </span>
+                                    <% } else if (trans.trans_stock_type===2) { %>
+                                        <span
+                                            class="bg-red-100 text-red-700 px-3 py-1 rounded-lg text-xs font-bold ring-1 ring-red-200">
+                                            เบิกออก
+                                        </span>
+                                        <% } else if (trans.trans_stock_type===3) { %>
+                                            <span
+                                                class="bg-blue-100 text-blue-700 px-3 py-1 rounded-lg text-xs font-bold ring-1 ring-blue-200">
+                                                ปรับปรุง
+                                            </span>
+                                            <% } else if (trans.trans_stock_type===4) { %>
+                                                <span
+                                                    class="bg-purple-100 text-purple-700 px-3 py-1 rounded-lg text-xs font-bold ring-1 ring-purple-200">
+                                                    โอนย้าย
+                                                </span>
+                                                <% } else { %>
+                                                    <span
+                                                        class="bg-gray-100 text-gray-700 px-3 py-1 rounded-lg text-xs font-bold ring-1 ring-gray-200">
+                                                        ไม่ระบุ
+                                                    </span>
+                                                    <% } %>
+                            </td>
+                            <td
+                                class="px-6 py-5 text-right font-bold <%= trans.trans_stock_type === 1 ? 'text-green-600' : 'text-red-600' %>">
+                                <%= trans.trans_stock_type===1 ? '+' : '-' %>
+                                    <%= (trans.qty || 0).toLocaleString('th-TH', { minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2 }) %>
+                            </td>
+                            <td class="px-6 py-5 text-right text-slate-600">
+                                <%= (trans.price || 0).toLocaleString('th-TH', { minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2 }) %>
+                            </td>
+                        </tr>
+                        <% }) %>
+                            <% if (transactions.length===0) { %>
+                                <tr>
+                                    <td colspan="7" class="px-6 py-20 text-center text-slate-400">
+                                        <i class="fa-solid fa-folder-open text-5xl mb-4 opacity-20 block"></i>
+                                        <span class="font-medium">ไม่พบข้อมูลประวัติการเคลื่อนไหว</span>
+                                    </td>
+                                </tr>
+                                <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <%- include('../partials/pagination') %>
+    </div>
+
+    <%- include('../partials/layout_end') %>

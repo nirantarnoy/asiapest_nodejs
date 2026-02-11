@@ -1,0 +1,148 @@
+<%- include('../partials/layout_start') %>
+
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+            <h2 class="text-3xl font-bold text-slate-800">ผู้ใช้งาน</h2>
+            <p class="text-emerald-600/60 font-medium">จัดการสิทธิ์การเข้าถึงและการอนุญาตของผู้ดูแลระบบ</p>
+        </div>
+        <button onclick="openUserModal('addUser')"
+            class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold flex items-center justify-center transition-all shadow-lg shadow-emerald-100">
+            <i class="fa-solid fa-user-plus mr-2"></i> เพิ่มผู้ใช้งาน
+        </button>
+    </div>
+
+    <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50/50 border-b border-slate-100">
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">รายละเอียดผู้ใช้
+                        </th>
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">อีเมล
+                        </th>
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">บทบาท</th>
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">
+                            จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    <% users.forEach(u=> { %>
+                        <tr class="hover:bg-emerald-50/30 transition-colors">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center">
+                                    <div
+                                        class="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold mr-3">
+                                        <i class="fa-solid fa-user"></i>
+                                    </div>
+                                    <span class="font-bold text-slate-800">
+                                        <%= u.username %>
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-slate-500">
+                                <%= u.email %>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span
+                                    class="px-3 py-1 bg-emerald-50 text-emerald-600 text-xs font-bold rounded-full">ผู้ดูแลระบบ</span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <div class="flex justify-end space-x-2">
+                                    <button onclick="editUser('<%= u.id %>', '<%= u.username %>', '<%= u.email %>')"
+                                        class="p-2 text-amber-600 hover:bg-amber-50 rounded-lg transition-colors">
+                                        <i class="fa-solid fa-user-pen"></i>
+                                    </button>
+                                    <a href="/users/delete/<%= u.id %>"
+                                        onclick="return confirm('ยืนยันการลบสิทธิ์ผู้ใช้งานนี้?')"
+                                        class="p-2 text-rose-600 hover:bg-rose-50 rounded-lg transition-colors">
+                                        <i class="fa-solid fa-user-minus"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- User Modal -->
+    <div id="userModal"
+        class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl animate-in fade-in zoom-in duration-200">
+            <form id="userForm" method="POST" class="p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 id="userModalTitle" class="text-2xl font-bold text-slate-800">เพิ่มผู้ใช้งาน</h3>
+                    <button type="button" onclick="closeModal('userModal')" class="text-slate-400 hover:text-slate-600">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">ชื่อผู้ใช้งาน</label>
+                        <input type="text" name="username" id="uUsername" required
+                            class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">อีเมล</label>
+                        <input type="email" name="email" id="uEmail" required
+                            class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none">
+                    </div>
+                    <div id="passwordField">
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">รหัสผ่าน</label>
+                        <input type="password" name="password" id="uPassword"
+                            class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none">
+                    </div>
+                </div>
+
+                <div class="mt-8 flex space-x-3">
+                    <button type="button" onclick="closeModal('userModal')"
+                        class="flex-1 px-4 py-3 rounded-xl border border-slate-200 font-bold text-slate-600 hover:bg-slate-50 transition-colors">ยกเลิก</button>
+                    <button type="submit"
+                        class="flex-1 px-4 py-3 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-100">บันทึกข้อมูล</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openUserModal(type) {
+            const modal = document.getElementById('userModal');
+            const form = document.getElementById('userForm');
+            const title = document.getElementById('userModalTitle');
+            const passField = document.getElementById('passwordField');
+
+            if (type === 'addUser') {
+                form.action = '/users/add';
+                title.innerText = 'เพิ่มผู้ใช้งานใหม่';
+                passField.classList.remove('hidden');
+                document.getElementById('uPassword').required = true;
+                form.reset();
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function editUser(id, username, email) {
+            const modal = document.getElementById('userModal');
+            const form = document.getElementById('userForm');
+            const title = document.getElementById('userModalTitle');
+            const passField = document.getElementById('passwordField');
+
+            form.action = '/users/edit/' + id;
+            title.innerText = 'แก้ไขผู้ใช้งาน';
+            passField.classList.add('hidden');
+            document.getElementById('uPassword').required = false;
+
+            document.getElementById('uUsername').value = username;
+            document.getElementById('uEmail').value = email;
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+    </script>
+
+    <%- include('../partials/layout_end') %>

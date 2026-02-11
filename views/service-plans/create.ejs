@@ -1,0 +1,84 @@
+<%- include('../partials/layout_start') %>
+
+    <form action="/service-plans/add" method="POST" class="max-w-7xl mx-auto pb-20">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div>
+                <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">เพิ่มแผนบริการ</h1>
+                <p class="text-slate-500 mt-1 font-medium">ระบุวันนัดหมายและพนักงานที่จะเข้าบริการ</p>
+            </div>
+            <div class="flex space-x-3">
+                <a href="/service-plans"
+                    class="flex items-center justify-center space-x-2 bg-white border border-slate-200 text-slate-600 px-6 py-3 rounded-2xl shadow-sm hover:bg-slate-50 transition-all font-bold">
+                    <span>ยกเลิก</span>
+                </a>
+                <button type="submit"
+                    class="flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-2xl shadow-lg shadow-emerald-200 transition-all active:scale-95 font-bold">
+                    <i class="fa-solid fa-save text-sm"></i>
+                    <span>บันทึกแผน</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-[2rem] shadow-sm border border-emerald-50 p-8 space-y-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2 text-primary">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">เลขที่แผน</label>
+                    <input type="text" name="plan_no" required
+                        class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium">
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">วันที่ตามเป้าหมาย</label>
+                    <input type="date" name="target_date" required value="<%= new Date().toISOString().split('T')[0] %>"
+                        class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium">
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">อ้างอิงใบเสนอราคา</label>
+                    <select name="quotation_id"
+                        class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium appearance-none">
+                        <option value="">เลือกใบเสนอราคา</option>
+                        <% quotations.forEach(q=> { %>
+                            <option value="<%= q.id %>">
+                                <%= q.quotation_no %>
+                            </option>
+                            <% }) %>
+                    </select>
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">อ้างอิงสัญญา</label>
+                    <select name="contract_id"
+                        class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium appearance-none">
+                        <option value="">เลือกสัญญา</option>
+                        <% contracts.forEach(c=> { %>
+                            <option value="<%= c.id %>">
+                                <%= c.contract_no %>
+                            </option>
+                            <% }) %>
+                    </select>
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">รถบริการ</label>
+                    <select name="car_id"
+                        class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium appearance-none">
+                        <option value="">เลือกรถบริการ</option>
+                        <% cars.forEach(c=> { %>
+                            <option value="<%= c.id %>">
+                                <%= c.plate_number %>
+                            </option>
+                            <% }) %>
+                    </select>
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">รอบที่ (Interval)</label>
+                    <input type="number" name="interval_no" value="1"
+                        class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium">
+                </div>
+                <div class="space-y-2 md:col-span-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">หมายเหตุ</label>
+                    <textarea name="note" rows="3"
+                        class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium"></textarea>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <%- include('../partials/layout_end') %>

@@ -1,0 +1,74 @@
+{
+  "id": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": false
+  },
+  "username": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": false
+  },
+  "auth_key": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 32,
+    "nullable": false
+  },
+  "password_hash": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": false
+  },
+  "password_reset_token": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": true
+  },
+  "email": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": false
+  },
+  "status": {
+    "defaultValue": "10",
+    "type": "smallint",
+    "maxLength": null,
+    "nullable": false
+  },
+  "created_at": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": false
+  },
+  "updated_at": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": false
+  },
+  "verification_token": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": true
+  },
+  "group_id": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "emp_id": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "id": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": false
+  },
+  "code": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": true
+  },
+  "fname": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": true
+  },
+  "lname": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": true
+  },
+  "gender": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "position": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "salary_type": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "emp_start": {
+    "defaultValue": null,
+    "type": "datetime",
+    "maxLength": null,
+    "nullable": true
+  },
+  "description": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": true
+  },
+  "photo": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": true
+  },
+  "status": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "created_at": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "updated_at": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "created_by": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "updated_by": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  }
+}

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ใบนัดหมายบริการ - <%= item.plan_no %>
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&family=Prompt:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            /* Blue for Service Plan */
+            --primary-dark: #2563eb;
+            --slate-600: #475569;
+            --slate-700: #334155;
+            --slate-800: #1e293b;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            padding: 30px;
+            color: var(--slate-800);
+            line-height: 1.4;
+            background-color: white;
+            font-size: 13px;
+        }
+
+        h1,
+        h2,
+        h3,
+        .brand-font {
+            font-family: 'Prompt', sans-serif;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 15px;
+        }
+
+        .company-info h1 {
+            margin: 0 0 4px 0;
+            color: var(--primary-dark);
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .company-info p {
+            margin: 1px 0;
+            color: var(--slate-600);
+            font-size: 12px;
+        }
+
+        .document-title {
+            text-align: right;
+        }
+
+        .document-title h2 {
+            margin: 0 0 5px 0;
+            color: var(--primary-color);
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .document-title p {
+            margin: 2px 0;
+            font-size: 13px;
+            color: var(--slate-700);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .info-box h3 {
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--slate-600);
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: var(--slate-700);
+            padding: 10px 8px;
+            border-top: 1px solid #e2e8f0;
+            border-bottom: 2px solid #e2e8f0;
+            font-size: 12px;
+            font-family: 'Prompt', sans-serif;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 8px 8px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .signature-grid {
+            margin-top: 60px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+        }
+
+        .sig-box {
+            text-align: center;
+        }
+
+        .sig-line {
+            border-bottom: 1px solid #cbd5e1;
+            height: 40px;
+            margin-bottom: 10px;
+        }
+
+        @media print {
+            .no-print {
+                display: none;
+            }
+
+            body {
+                padding: 0;
+            }
+
+            @page {
+                size: A4;
+                margin: 1.5cm;
+            }
+        }
+    </style>
+</head>
+
+<body onload="window.print()">
+    <div class="header">
+        <div class="company-info">
+            <h1>
+                <%= company.name %>
+            </h1>
+            <p>
+                <%= company.eng_name || '' %>
+            </p>
+            <p>
+                <%= company.address %>
+            </p>
+            <p>โทร: <%= company.phone %> | อีเมล: <%= company.email || '-' %>
+            </p>
+        </div>
+        <div class="document-title">
+            <h2>ใบนัดหมายบริการ</h2>
+            <p><strong>PLAN NO. :</strong>
+                <%= item.plan_no %>
+            </p>
+            <p><strong>DATE :</strong>
+                <%= new Date().toLocaleDateString('th-TH') %>
+            </p>
+        </div>
+    </div>
+
+    <div class="info-grid">
+        <div class="info-box">
+            <h3>ลูกค้า / CUSTOMER</h3>
+            <p><strong>
+                    <%= item.customer_name %>
+                </strong></p>
+            <p style="font-size: 12px; color: var(--slate-600);">
+                <%= item.customer_address || '-' %>
+            </p>
+            <p>โทร: <%= item.customer_phone || '-' %>
+            </p>
+        </div>
+        <div class="info-box text-right">
+            <h3>ข้อมูลการนัดหมาย / APPOINTMENT INFO</h3>
+            <p><strong>วันที่นัดหมาย:</strong>
+                <%= item.target_date ? new Date(item.target_date).toLocaleDateString('th-TH') : '-' %>
+            </p>
+            <p><strong>วันที่ยืนยัน:</strong>
+                <%= item.confirm_date ? new Date(item.confirm_date).toLocaleDateString('th-TH') : '-' %>
+            </p>
+            <p><strong>ทะเบียนรถ:</strong>
+                <%= item.plate_number || '-' %>
+                    <%= item.province ? ' (' + item.province + ')' : '' %>
+            </p>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th class="text-center" style="width: 60px;">#</th>
+                <th>รายละเอียด / DESCRIPTION</th>
+                <th class="text-center" style="width: 150px;">หมายเหตุ / NOTE</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="text-center">1</td>
+                <td>
+                    บริการกำจัดแมลง (Pest Control Service)<br>
+                    <small>สัญญาเลขที่: <%= item.contract_no || '-' %></small><br>
+                    <small>ใบเสนอราคา: <%= item.quotation_no || '-' %></small>
+                </td>
+                <td class="text-center">
+                    <%= item.note || '-' %>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="signature-grid">
+        <div class="sig-box">
+            <div class="sig-line"></div>
+            <p>ผู้นัดหมาย / Scheduler</p>
+            <p>วันที่ ......../......../........</p>
+        </div>
+        <div class="sig-box">
+            <div class="sig-line"></div>
+            <p>ลูกค้า / Customer (รับทราบ)</p>
+            <p>วันที่ ......../......../........</p>
+        </div>
+    </div>
+
+    <div class="no-print" style="margin-top: 50px; text-align: center; padding-bottom: 50px;">
+        <button onclick="window.print()"
+            style="padding: 12px 25px; background: var(--primary-color); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+            พิมพ์เอกสาร
+        </button>
+    </div>
+</body>
+
+</html>

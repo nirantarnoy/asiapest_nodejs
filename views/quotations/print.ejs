@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ใบเสนอราคา - <%= quotation.quotation_no %>
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&family=Prompt:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #059669;
+            --primary-dark: #064e3b;
+            --slate-600: #475569;
+            --slate-700: #334155;
+            --slate-800: #1e293b;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            padding: 30px;
+            color: var(--slate-800);
+            line-height: 1.4;
+            background-color: white;
+            font-size: 13px;
+        }
+
+        h1,
+        h2,
+        h3,
+        .brand-font {
+            font-family: 'Prompt', sans-serif;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 15px;
+        }
+
+        .company-info h1 {
+            margin: 0 0 4px 0;
+            color: var(--primary-dark);
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .company-info p {
+            margin: 1px 0;
+            color: var(--slate-600);
+            font-size: 12px;
+        }
+
+        .document-title {
+            text-align: right;
+        }
+
+        .document-title h2 {
+            margin: 0 0 5px 0;
+            color: var(--primary-color);
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .document-title p {
+            margin: 2px 0;
+            font-size: 13px;
+            color: var(--slate-700);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .info-box h3 {
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--slate-600);
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 4px;
+        }
+
+        .info-box p {
+            margin: 4px 0;
+        }
+
+        .info-box strong {
+            color: var(--slate-800);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: var(--slate-700);
+            font-weight: 600;
+            text-align: left;
+            padding: 10px 8px;
+            border-top: 1px solid #e2e8f0;
+            border-bottom: 2px solid #e2e8f0;
+            font-family: 'Prompt', sans-serif;
+            font-size: 12px;
+        }
+
+        td {
+            padding: 8px 8px;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: top;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .totals-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .totals {
+            width: 320px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 13px;
+            color: var(--slate-700);
+        }
+
+        .total-row.grand-total {
+            border-top: 2px solid var(--primary-color);
+            margin-top: 8px;
+            padding: 10px 0;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--primary-dark);
+            font-family: 'Prompt', sans-serif;
+        }
+
+        .notes-section {
+            width: 50%;
+            font-size: 13px;
+            color: var(--slate-600);
+            background-color: #f8fafc;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .notes-section strong {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--slate-800);
+        }
+
+        .footer {
+            margin-top: 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        .signature-box {
+            text-align: center;
+        }
+
+        .signature-line {
+            border-bottom: 1px solid #cbd5e1;
+            margin-bottom: 8px;
+            height: 45px;
+        }
+
+        .signature-box p {
+            margin: 2px 0;
+            font-size: 13px;
+            color: var(--slate-600);
+        }
+
+        .signature-box .role {
+            font-weight: 600;
+            color: var(--slate-800);
+            margin-bottom: 5px;
+        }
+
+        @media print {
+            body {
+                padding: 0;
+            }
+
+            .no-print {
+                display: none;
+            }
+
+            @page {
+                size: A4;
+                margin: 1.5cm;
+            }
+        }
+    </style>
+</head>
+
+<body onload="window.print()">
+    <div class="header">
+        <div class="company-info">
+            <h1>
+                <%= company.name %>
+            </h1>
+            <p>
+                <%= company.eng_name || '' %>
+            </p>
+            <p>
+                <%= company.address %>
+            </p>
+            <p>โทร: <%= company.phone %> | อีเมล: <%= company.email || '-' %>
+            </p>
+            <p>เลขที่ประจำตัวผู้เสียภาษี: <%= company.tax_id %>
+            </p>
+        </div>
+        <div class="document-title">
+            <h2>ใบเสนอราคา</h2>
+            <p><strong>เลขที่เอกสาร:</strong>
+                <%= quotation.quotation_no %>
+            </p>
+            <p><strong>วันที่:</strong>
+                <%= quotation.quotation_date ? new Date(quotation.quotation_date).toLocaleDateString('th-TH', {
+                    day: 'numeric' , month: 'long' , year: 'numeric' }) : '-' %>
+            </p>
+        </div>
+    </div>
+
+    <div class="info-grid">
+        <div class="info-box">
+            <h3>ข้อมูลลูกค้า / Customer</h3>
+            <p><strong>คุณ <%= quotation.customer_name %></strong></p>
+            <p>
+                <%= quotation.customer_address || '-' %>
+            </p>
+            <p>โทรศัพท์: <%= quotation.customer_phone || '-' %>
+            </p>
+        </div>
+        <div class="info-box" style="text-align: right;">
+            <h3>รายละเอียด / Details</h3>
+            <p><strong>ประเภทบริการ:</strong>
+                <%= quotation.service_type_name || '-' %>
+            </p>
+            <p><strong>เงื่อนไขการชำระเงิน:</strong>
+                <%= quotation.credit_term %> วัน
+            </p>
+            <p><strong>พนักงานขาย:</strong>
+                <%= quotation.sale_fname %>
+                    <%= quotation.sale_lname %>
+            </p>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th width="40" class="text-center">ลำดับ</th>
+                <th>รายการสินค้า / บริการ</th>
+                <th width="80" class="text-right">จำนวน</th>
+                <th width="120" class="text-right">ราคา / หน่วย</th>
+                <th width="140" class="text-right">รวมเป็นเงิน</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% lines.forEach((line, index)=> { %>
+                <tr>
+                    <td class="text-center">
+                        <%= index + 1 %>
+                    </td>
+                    <td>
+                        <div style="font-weight: 500; color: var(--slate-800);">
+                            <%= line.name %>
+                        </div>
+                    </td>
+                    <td class="text-right">
+                        <%= line.qty.toLocaleString() %>
+                            <%= line.unit_name || 'หน่วย' %>
+                    </td>
+                    <td class="text-right">
+                        <%= (line.price_per_unit || 0).toLocaleString(undefined, { minimumFractionDigits: 2,
+                            maximumFractionDigits: 2 }) %>
+                    </td>
+                    <td class="text-right" style="font-weight: 600;">
+                        <%= (line.line_total || 0).toLocaleString(undefined, { minimumFractionDigits: 2,
+                            maximumFractionDigits: 2 }) %>
+                    </td>
+                </tr>
+                <% }) %>
+                    <% if (lines.length < 5) { for(let i=0; i < (5 - lines.length); i++) { %>
+                        <tr>
+                            <td class="text-center">&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <% } } %>
+        </tbody>
+    </table>
+
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div class="notes-section">
+            <strong>หมายเหตุ / Remarks:</strong>
+            <%= quotation.note || '-' %>
+        </div>
+        <div class="totals">
+            <div class="total-row">
+                <span>รวมเป็นเงิน (Sub-Total):</span>
+                <span>
+                    <%= (quotation.sub_total || 0).toLocaleString(undefined, { minimumFractionDigits: 2,
+                        maximumFractionDigits: 2 }) %>
+                </span>
+            </div>
+            <div class="total-row">
+                <span>ภาษีมูลค่าเพิ่ม (VAT 7%):</span>
+                <span>
+                    <%= (quotation.sale_tax || 0).toLocaleString(undefined, { minimumFractionDigits: 2,
+                        maximumFractionDigits: 2 }) %>
+                </span>
+            </div>
+            <div class="total-row grand-total">
+                <span>ยอดรวมสุทธิ (Total):</span>
+                <span>
+                    <%= (quotation.total || 0).toLocaleString(undefined, { minimumFractionDigits: 2,
+                        maximumFractionDigits: 2 }) %> บาท
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="signature-box">
+            <p class="role">ผู้เสนอราคา / Quoted By</p>
+            <div class="signature-line"></div>
+            <p>( <%= quotation.sale_fname %>
+                    <%= quotation.sale_lname %> )</p>
+            <p>วันที่ ......../......../........</p>
+        </div>
+        <div class="signature-box">
+            <p class="role">ผู้อนุมัติ / Approved By</p>
+            <div class="signature-line"></div>
+            <p>(..................................................)</p>
+            <p>วันที่ ......../......../........</p>
+        </div>
+        <div class="signature-box">
+            <p class="role">ผู้ตอบรับ / Accepted By</p>
+            <div class="signature-line"></div>
+            <p>(..................................................)</p>
+            <p>วันที่ ......../......../........</p>
+        </div>
+    </div>
+
+    <div class="no-print" style="margin-top: 50px; text-align: center; padding-bottom: 50px;">
+        <button onclick="window.print()"
+            style="padding: 12px 25px; background: var(--primary-color); color: white; border: none; border-radius: 12px; cursor: pointer; font-family: 'Prompt'; font-weight: 600; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
+            สั่งพิมพ์เอกสาร
+        </button>
+        <button onclick="window.close()"
+            style="padding: 12px 25px; background: #64748b; color: white; border: none; border-radius: 12px; cursor: pointer; margin-left: 10px; font-family: 'Prompt'; font-weight: 600;">
+            ปิดหน้านี้
+        </button>
+    </div>
+</body>
+
+</html>

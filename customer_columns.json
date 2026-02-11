@@ -1,0 +1,122 @@
+{
+  "id": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": false
+  },
+  "code": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": true
+  },
+  "name": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": true
+  },
+  "description": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": true
+  },
+  "customer_group_id": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "customer_type_id": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "status": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "created_at": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "created_by": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "updated_at": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "updated_by": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "location_info": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": true
+  },
+  "phone": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": true
+  },
+  "payment_method_id": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "payment_term_id": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "contact_name": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": true
+  },
+  "address": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": true
+  },
+  "shop_photo": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": true
+  },
+  "tax_id": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": true
+  },
+  "email": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": true
+  }
+}

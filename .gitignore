@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+
+# User uploads and backups
+uploads/
+public/uploads/
+# Keep the folder structure but ignore content, if desired, add a .gitkeep file inside uploads/
+# For now, just ignore the folder content or the folder itself if it's purely generated.
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.vscode/
+.idea/
+
+# Coverage
+coverage/

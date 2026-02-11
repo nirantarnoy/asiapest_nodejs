@@ -1,0 +1,75 @@
+<%- include('../partials/layout_start') %>
+
+    <div class="mb-8 flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">ทะเบียนผู้ขาย (Vendor)</h1>
+            <p class="text-slate-500 mt-1 font-medium">จัดการข้อมูลผู้ขายและผู้ติดต่อ</p>
+        </div>
+        <a href="/vendors/create"
+            class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-2xl shadow-lg shadow-indigo-100 transition-all active:scale-95 flex items-center space-x-2">
+            <i class="fa-solid fa-plus"></i>
+            <span>เพิ่มผู้ขาย</span>
+        </a>
+    </div>
+
+    <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-slate-50/50">
+                    <tr>
+                        <th class="px-8 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest">ชื่อผู้ขาย</th>
+                        <th class="px-4 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest">ผู้ติดต่อ</th>
+                        <th class="px-4 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest">เบอร์โทรศัพท์
+                        </th>
+                        <th class="px-4 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest">อีเมล</th>
+                        <th class="px-8 py-5 text-right text-slate-400 font-bold text-xs uppercase tracking-widest">
+                            จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    <% if (items.length===0) { %>
+                        <tr>
+                            <td colspan="5" class="px-8 py-20 text-center text-slate-400 font-medium">ไม่พบข้อมูลผู้ขาย
+                            </td>
+                        </tr>
+                        <% } %>
+                            <% items.forEach(item=> { %>
+                                <tr class="group hover:bg-indigo-50/20 transition-all">
+                                    <td class="px-8 py-6">
+                                        <p class="font-bold text-slate-700">
+                                            <%= item.name %>
+                                        </p>
+                                        <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-1">
+                                            <%= item.tax_id || 'ไม่มีเลขผู้เสียภาษี' %>
+                                        </p>
+                                    </td>
+                                    <td class="px-4 py-6 text-slate-500 text-sm">
+                                        <%= item.contact_name || '-' %>
+                                    </td>
+                                    <td class="px-4 py-6 text-slate-500 text-sm">
+                                        <%= item.phone || '-' %>
+                                    </td>
+                                    <td class="px-4 py-6 text-slate-500 text-sm font-medium">
+                                        <%= item.email || '-' %>
+                                    </td>
+                                    <td class="px-8 py-6 text-right">
+                                        <div class="flex justify-end space-x-2">
+                                            <a href="/vendors/edit/<%= item.id %>"
+                                                class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 transition-all">
+                                                <i class="fa-solid fa-pen-to-square text-sm"></i>
+                                            </a>
+                                            <button
+                                                onclick="if(confirm('ยืนยันการลบ?')) window.location.href='/vendors/delete/<%= item.id %>'"
+                                                class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 transition-all">
+                                                <i class="fa-solid fa-trash-can text-sm"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <%- include('../partials/layout_end') %>

@@ -1,0 +1,122 @@
+{
+  "id": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": false
+  },
+  "code": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": true
+  },
+  "name": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": true
+  },
+  "description": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": true
+  },
+  "product_group_id": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "product_type_id": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "photo": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": true
+  },
+  "min_stock": {
+    "defaultValue": null,
+    "type": "float",
+    "maxLength": null,
+    "nullable": true
+  },
+  "max_stock": {
+    "defaultValue": null,
+    "type": "float",
+    "maxLength": null,
+    "nullable": true
+  },
+  "std_cost": {
+    "defaultValue": null,
+    "type": "float",
+    "maxLength": null,
+    "nullable": true
+  },
+  "status": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "created_at": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "created_by": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "updated_at": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "updated_by": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "unit_id": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "sale_price": {
+    "defaultValue": null,
+    "type": "float",
+    "maxLength": null,
+    "nullable": true
+  },
+  "nw": {
+    "defaultValue": null,
+    "type": "float",
+    "maxLength": null,
+    "nullable": true
+  },
+  "gw": {
+    "defaultValue": null,
+    "type": "float",
+    "maxLength": null,
+    "nullable": true
+  },
+  "sale_price2": {
+    "defaultValue": null,
+    "type": "float",
+    "maxLength": null,
+    "nullable": true
+  }
+}

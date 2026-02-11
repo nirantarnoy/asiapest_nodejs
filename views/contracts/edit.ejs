@@ -1,0 +1,101 @@
+<%- include('../partials/layout_start') %>
+
+    <form action="/contracts/edit/<%= item.id %>" method="POST" class="max-w-7xl mx-auto pb-20">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div>
+                <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">แก้ไขสัญญาบริการ</h1>
+                <p class="text-slate-500 mt-1 font-medium">ปรับปรุงข้อมูลสัญญาในระบบ</p>
+            </div>
+            <div class="flex space-x-3">
+                <a href="/contracts"
+                    class="flex items-center justify-center space-x-2 bg-white border border-slate-200 text-slate-600 px-6 py-3 rounded-2xl shadow-sm hover:bg-slate-50 transition-all font-bold">
+                    <span>ยกเลิก</span>
+                </a>
+                <% if (item.status==2) { %>
+                    <a href="/contracts/gen-plan/<%= item.id %>" onclick="return confirm('ยืนยันสร้างแผนบริการ?')"
+                        class="flex items-center justify-center space-x-2 bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-2xl shadow-lg shadow-amber-200 transition-all active:scale-95 font-bold">
+                        <i class="fa-solid fa-calendar-days text-sm"></i>
+                        <span>สร้างแผนบริการ</span>
+                    </a>
+                    <% } %>
+                        <a href="/contracts/timeline/<%= item.id %>"
+                            class="flex items-center justify-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-2xl shadow-lg shadow-indigo-200 transition-all active:scale-95 font-bold">
+                            <i class="fa-solid fa-diagram-project text-sm"></i>
+                            <span>Timeline สัญญา</span>
+                        </a>
+                        <button type="submit"
+                            class="flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-2xl shadow-lg shadow-emerald-200 transition-all active:scale-95 font-bold">
+                            <i class="fa-solid fa-save text-sm"></i>
+                            <span>บันทึกการแก้ไข</span>
+                        </button>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-[2rem] shadow-sm border border-emerald-50 p-8 space-y-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">เลขที่สัญญา</label>
+                    <input type="text" name="contract_no" required value="<%= item.contract_no %>"
+                        class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium">
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">วันที่ทำสัญญา</label>
+                    <input type="date" name="contract_date" required
+                        value="<%= item.contract_date ? new Date(item.contract_date).toISOString().split('T')[0] : '' %>"
+                        class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium">
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">อ้างอิงใบเสนอราคา</label>
+                    <select name="quotation_id"
+                        class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium appearance-none">
+                        <option value="">เลือกใบเสนอราคา</option>
+                        <% quotations.forEach(q=> { %>
+                            <option value="<%= q.id %>" <%=item.quotation_id===q.id ? 'selected' : '' %>><%=
+                                    q.quotation_no %>
+                            </option>
+                            <% }) %>
+                    </select>
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">สถานะ</label>
+                    <select name="status"
+                        class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium appearance-none">
+                        <option value="1" <%=item.status===1 ? 'selected' : '' %>>ใช้งาน</option>
+                        <option value="0" <%=item.status===0 ? 'selected' : '' %>>ระงับ</option>
+                    </select>
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">วันที่เริ่มสัญญา</label>
+                    <input type="date" name="contract_start_date" required
+                        value="<%= item.contract_start_date ? new Date(item.contract_start_date).toISOString().split('T')[0] : '' %>"
+                        class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium">
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">วันที่สิ้นสุดสัญญา</label>
+                    <input type="date" name="contract_expire_date" required
+                        value="<%= item.contract_expire_date ? new Date(item.contract_expire_date).toISOString().split('T')[0] : '' %>"
+                        class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium">
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">ปัญหาที่พบ (Problem)</label>
+                    <textarea name="problem" rows="2"
+                        class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium"><%= item.problem %></textarea>
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">สาเหตุความเสียหาย (Cause)</label>
+                    <textarea name="problem_cause" rows="2"
+                        class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium"><%= item.problem_cause %></textarea>
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">การดำเนินการ (Action)</label>
+                    <textarea name="taken_action" rows="2"
+                        class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium"><%= item.taken_action %></textarea>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <%- include('../partials/layout_end') %>

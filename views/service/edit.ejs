@@ -1,0 +1,75 @@
+<%- include('../partials/layout_start') %>
+
+    <form action="/service/edit/<%= item.id %>" method="POST" class="max-w-4xl mx-auto pb-20">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <a href="/service/view/<%= item.id %>"
+                        class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-emerald-600 hover:border-emerald-200 hover:bg-emerald-50 transition-all">
+                        <i class="fa-solid fa-arrow-left text-sm"></i>
+                    </a>
+                    <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Edit Service Order</h1>
+                </div>
+                <p class="text-slate-500 font-medium ml-[52px]">แก้ไขใบสั่งบริการ</p>
+            </div>
+        </div>
+
+        <!-- Form Card -->
+        <div class="bg-white rounded-[2rem] shadow-sm border border-emerald-50 overflow-hidden p-8">
+            <!-- Service No (Read-only) -->
+            <div class="mb-6">
+                <label class="block text-sm font-bold text-slate-700 mb-2">
+                    Service No. <span class="text-rose-500">*</span>
+                </label>
+                <input type="text" value="<%= item.service_no %>" readonly
+                    class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-500 font-mono font-bold cursor-not-allowed">
+            </div>
+
+            <!-- Estimate ID -->
+            <div class="mb-6">
+                <label class="block text-sm font-bold text-slate-700 mb-2">
+                    Estimate Reference
+                </label>
+                <input type="text" value="<%= item.journal_no || '-' %>" readonly
+                    class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-500 cursor-not-allowed">
+            </div>
+
+            <!-- Status -->
+            <div class="mb-6">
+                <label class="block text-sm font-bold text-slate-700 mb-2">
+                    สถานะ <span class="text-rose-500">*</span>
+                </label>
+                <select name="status" required
+                    class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all">
+                    <option value="0" <%=item.status===0 ? 'selected' : '' %>>Pending</option>
+                    <option value="1" <%=item.status===1 ? 'selected' : '' %>>Completed</option>
+                </select>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-6">
+                <label class="block text-sm font-bold text-slate-700 mb-2">
+                    หมายเหตุ / คำอธิบาย
+                </label>
+                <textarea name="description" rows="4"
+                    class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all"
+                    placeholder="ระบุหมายเหตุหรือรายละเอียดเพิ่มเติม..."><%= item.description || '' %></textarea>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex gap-3 justify-end pt-6 border-t border-slate-100">
+                <a href="/service/view/<%= item.id %>"
+                    class="px-6 py-3 bg-slate-100 text-slate-700 rounded-xl font-bold hover:bg-slate-200 transition-all">
+                    ยกเลิก
+                </a>
+                <button type="submit"
+                    class="px-6 py-3 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-all shadow-sm hover:shadow-md flex items-center gap-2">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    <span>บันทึก</span>
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <%- include('../partials/layout_end') %>

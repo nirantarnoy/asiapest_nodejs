@@ -1,0 +1,63 @@
+<%- include('../partials/layout_start') %>
+
+    <div class="mb-8 flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">รายการงาน (Work Tasks)</h1>
+            <p class="text-slate-500 mt-1 font-medium">จัดการรายการงานและส่วนประกอบ</p>
+        </div>
+        <a href="/work-tasks/create"
+            class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-2xl shadow-lg shadow-indigo-100 transition-all active:scale-95 flex items-center space-x-2">
+            <i class="fa-solid fa-plus"></i>
+            <span>สร้างรายการงาน</span>
+        </a>
+    </div>
+
+    <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-slate-50/50">
+                    <tr>
+                        <th class="px-8 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest">
+                            รหัสงาน</th>
+                        <th class="px-4 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest">ชื่องาน</th>
+                        <th class="px-4 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest">รายละเอียด</th>
+                        <th class="px-8 py-5 text-right text-slate-400 font-bold text-xs uppercase tracking-widest">
+                            จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    <% items.forEach(item=> { %>
+                        <tr class="group hover:bg-indigo-50/20 transition-all">
+                            <td class="px-8 py-6 font-bold text-slate-700">
+                                <%= item.code %>
+                            </td>
+                            <td class="px-4 py-6 text-slate-600 text-sm">
+                                <%= item.name %>
+                            </td>
+                            <td class="px-4 py-6 text-slate-500 text-sm truncate max-w-xs">
+                                <%= item.description || '-' %>
+                            </td>
+                            <td class="px-8 py-6 text-right">
+                                <div class="flex justify-end space-x-2">
+                                    <a href="/work-tasks/edit/<%= item.id %>"
+                                        class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 transition-all"
+                                        title="แก้ไข">
+                                        <i class="fa-solid fa-pen-to-square text-sm"></i>
+                                    </a>
+                                    <button
+                                        onclick="if(confirm('ยืนยันการลบ?')) window.location.href='/work-tasks/delete/<%= item.id %>'"
+                                        class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 transition-all"
+                                        title="ลบ">
+                                        <i class="fa-solid fa-trash-can text-sm"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
+        </div>
+        <%- include('../partials/pagination') %>
+    </div>
+
+    <%- include('../partials/layout_end') %>

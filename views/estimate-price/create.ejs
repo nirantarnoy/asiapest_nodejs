@@ -1,0 +1,251 @@
+<%- include('../partials/layout_start') %>
+
+    <form action="/estimate-price/add" method="POST" id="mainForm" class="max-w-7xl mx-auto pb-20">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div>
+                <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">สร้างใบประเมินราคา</h1>
+                <p class="text-slate-500 mt-1 font-medium">ระบุข้อมูลลูกค้าและรายการบริการเพื่อคำนวณราคา</p>
+            </div>
+            <div class="flex space-x-3">
+                <a href="/estimate-price"
+                    class="flex items-center justify-center space-x-2 bg-white border border-slate-200 text-slate-600 px-6 py-3 rounded-2xl shadow-sm hover:bg-slate-50 transition-all font-bold">
+                    <span>ยกเลิก</span>
+                </a>
+                <button type="submit"
+                    class="flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-2xl shadow-lg shadow-emerald-200 transition-all active:scale-95 font-bold">
+                    <i class="fa-solid fa-save text-sm"></i>
+                    <span>บันทึกข้อมูล</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Left Side: Header Info -->
+            <div class="lg:col-span-4 space-y-6">
+                <div class="bg-white rounded-[2rem] shadow-sm border border-emerald-50 p-8 space-y-6">
+                    <h3 class="text-lg font-bold text-slate-800 border-b border-slate-50 pb-4 flex items-center">
+                        <i class="fa-solid fa-file-invoice text-emerald-500 mr-2"></i>
+                        ข้อมูลเอกสาร
+                    </h3>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-1">เลขที่เอกสาร</label>
+                        <input type="text" name="journal_no" required
+                            class="w-full px-5 py-3 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium"
+                            placeholder="รันอัตโนมัติหรือระบุเอง">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-1">วันที่</label>
+                        <input type="date" name="trans_date" required
+                            value="<%= new Date().toISOString().split('T')[0] %>"
+                            class="w-full px-5 py-3 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-1">ลูกค้า</label>
+                        <select name="customer_id" required
+                            class="w-full px-5 py-3 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium appearance-none">
+                            <option value="">เลือกลูกค้า</option>
+                            <% customers.forEach(c=> { %>
+                                <option value="<%= c.id %>">
+                                    <%= c.name %>
+                                </option>
+                                <% }) %>
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-1">ประเภทบริการ</label>
+                        <select name="service_type_id" required
+                            class="w-full px-5 py-3 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium appearance-none">
+                            <option value="">เลือกประเภทบริการ</option>
+                            <% serviceTypes.forEach(st=> { %>
+                                <option value="<%= st.id %>">
+                                    <%= st.name %>
+                                </option>
+                                <% }) %>
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-1">สถานที่บริการ</label>
+                        <input type="text" name="service_place"
+                            class="w-full px-5 py-3 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium"
+                            placeholder="ที่ตั้งหรือสาขา">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold text-slate-700 ml-1">ขนาดอาคาร (ตรม.)</label>
+                            <input type="number" name="building_size" value="0" step="0.01"
+                                class="w-full px-5 py-3 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold text-slate-700 ml-1">ขนาดพื้นที่ (ตรว.)</label>
+                            <input type="number" name="ground_size" value="0" step="0.01"
+                                class="w-full px-5 py-3 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Line Items & Summary -->
+            <div class="lg:col-span-8 space-y-6">
+                <div class="bg-white rounded-[2rem] shadow-sm border border-emerald-50 p-8 space-y-6">
+                    <div class="flex items-center justify-between border-b border-slate-50 pb-4">
+                        <h3 class="text-lg font-bold text-slate-800 flex items-center">
+                            <i class="fa-solid fa-list-check text-emerald-500 mr-2"></i>
+                            รายการบริการ
+                        </h3>
+                        <button type="button" onclick="addRow()"
+                            class="bg-emerald-50 text-emerald-600 hover:bg-emerald-100 px-4 py-2 rounded-xl font-bold text-sm transition-all flex items-center space-x-1">
+                            <i class="fa-solid fa-plus-circle"></i>
+                            <span>เพิ่มรายการ</span>
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full no-border" id="linesTable">
+                            <thead>
+                                <tr class="text-left text-slate-400 text-xs uppercase tracking-widest">
+                                    <th class="pb-4 pl-2">บริการ/สินค้า</th>
+                                    <th class="pb-4 px-2 w-24 text-right">จำนวน</th>
+                                    <th class="pb-4 px-2 w-32 text-right">ราคา/หน่วย</th>
+                                    <th class="pb-4 px-2 w-24 text-center">รอบบริการ</th>
+                                    <th class="pb-4 px-2 w-32 text-right">รวม</th>
+                                    <th class="pb-4 w-10"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="linesContainer">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Totals -->
+                    <div class="border-t border-slate-50 pt-6 space-y-3">
+                        <div class="flex justify-end items-center space-x-4">
+                            <span class="text-slate-500 font-bold">ยอดเพิ่มเติม อื่นๆ:</span>
+                            <div class="w-40">
+                                <input type="number" name="additional_amount" id="additional_amount" value="0"
+                                    step="0.01" onchange="calculateGrandTotal()"
+                                    class="w-full px-4 py-2 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-xl outline-none transition-all font-bold text-right text-slate-700">
+                            </div>
+                        </div>
+                        <div class="flex justify-end items-center space-x-4">
+                            <span class="text-xl font-black text-slate-800">ยอดรวมทั้งสิ้น:</span>
+                            <div class="w-40">
+                                <input type="number" name="estimate_total_amount" id="estimate_total_amount" value="0"
+                                    step="0.01" readonly
+                                    class="w-full px-4 py-3 bg-emerald-50 border-none rounded-xl font-black text-right text-emerald-700 text-xl outline-none">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <template id="lineRowTemplate">
+        <tr class="group border-b border-slate-50 last:border-0">
+            <td class="py-4 pr-2">
+                <select name="lines[INDEX][item_id]" required onchange="updateRowPrice(this)"
+                    class="w-full px-4 py-3 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-xl outline-none transition-all font-medium appearance-none">
+                    <option value="">เลือกบริการ</option>
+                    <% products.forEach(p=> { %>
+                        <option value="<%= p.id %>" data-price="<%= p.sale_price || 0 %>" data-unit="<%= p.unit_id %>">
+                            <%= p.code %> - <%= p.name %>
+                        </option>
+                        <% }) %>
+                </select>
+            </td>
+            <td class="py-4 px-2">
+                <input type="number" name="lines[INDEX][qty]" step="1" value="1" onchange="updateLineTotal(this)"
+                    class="w-full px-4 py-3 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-xl outline-none transition-all font-medium text-right qty-input">
+            </td>
+            <td class="py-4 px-2">
+                <input type="number" name="lines[INDEX][price]" step="0.01" value="0" onchange="updateLineTotal(this)"
+                    class="w-full px-4 py-3 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-xl outline-none transition-all font-medium text-right price-input">
+            </td>
+            <td class="py-4 px-2">
+                <input type="number" name="lines[INDEX][service_count]" step="1" value="1"
+                    onchange="updateLineTotal(this)"
+                    class="w-full px-4 py-3 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-xl outline-none transition-all font-medium text-center service-count-input">
+            </td>
+            <td class="py-4 px-2">
+                <input type="number" name="lines[INDEX][line_total]" step="0.01" value="0" readonly
+                    class="w-full px-4 py-3 bg-slate-100 border-none rounded-xl font-bold text-right text-slate-700 line-total-input outline-none">
+            </td>
+            <td class="py-4 pl-2 text-right">
+                <button type="button" onclick="removeRow(this)"
+                    class="w-8 h-8 flex items-center justify-center rounded-lg text-slate-300 hover:text-rose-500 hover:bg-rose-50 transition-all">
+                    <i class="fa-solid fa-trash-can text-sm"></i>
+                </button>
+            </td>
+            <input type="hidden" name="lines[INDEX][unit_id]" class="unit-id-input">
+        </tr>
+    </template>
+
+    <script>
+        let rowIndex = 0;
+        const container = document.getElementById('linesContainer');
+        const template = document.getElementById('lineRowTemplate').innerHTML;
+
+        function addRow() {
+            const html = template.replace(/INDEX/g, rowIndex);
+            const tr = document.createElement('tr');
+            tr.className = "group border-b border-slate-50 last:border-0";
+            tr.innerHTML = html;
+            // The template already contains a <tr> tag internally because I put it as a template target, 
+            // but actually I should just put the internal content.
+            // Let's fix the template logic to be simpler.
+            container.appendChild(tr);
+            rowIndex++;
+        }
+
+        function removeRow(btn) {
+            btn.closest('tr').remove();
+            calculateGrandTotal();
+        }
+
+        function updateRowPrice(select) {
+            const option = select.options[select.selectedIndex];
+            const price = option.getAttribute('data-price') || 0;
+            const unitId = option.getAttribute('data-unit') || '';
+            const row = select.closest('tr');
+            row.querySelector('.price-input').value = price;
+            row.querySelector('.unit-id-input').value = unitId;
+            updateLineTotal(select);
+        }
+
+        function updateLineTotal(input) {
+            const row = input.closest('tr');
+            const qty = parseFloat(row.querySelector('.qty-input').value) || 0;
+            const price = parseFloat(row.querySelector('.price-input').value) || 0;
+            const serviceCount = parseFloat(row.querySelector('.service-count-input').value) || 1;
+
+            const total = qty * price * serviceCount;
+            row.querySelector('.line-total-input').value = total.toFixed(2);
+            calculateGrandTotal();
+        }
+
+        function calculateGrandTotal() {
+            let grandTotal = 0;
+            document.querySelectorAll('.line-total-input').forEach(input => {
+                grandTotal += parseFloat(input.value) || 0;
+            });
+
+            const additional = parseFloat(document.getElementById('additional_amount').value) || 0;
+            grandTotal += additional;
+
+            document.getElementById('estimate_total_amount').value = grandTotal.toFixed(2);
+        }
+
+        // Initialize with one row
+        window.onload = () => {
+            addRow();
+        };
+    </script>
+
+    <%- include('../partials/layout_end') %>

@@ -1,0 +1,10 @@
+{
+    "schedule": "55 16 * * *",
+    "enabled": true,
+    "nas_enabled": true,
+    "nas_host": "172.16.100.50",
+    "nas_port": 9022,
+    "nas_user": "cicadmin",
+    "nas_pass": "Tamakogi2012",
+    "nas_path": "/android_build"
+}

@@ -1,0 +1,108 @@
+<%- include('../partials/layout_start') %>
+
+    <div class="mb-8">
+        <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">รายงานความเคลื่อนไหวสินค้า</h1>
+        <p class="text-slate-500 mt-1 font-medium">ติดตามประวัติการรับเข้าและเบิกออกของสินค้า</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 p-8 mb-8">
+        <form action="/reports/stock-movement" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
+            <div class="space-y-2">
+                <label
+                    class="block text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">ตั้งแต่วันที่</label>
+                <input type="date" name="start_date" value="<%= filters.start_date %>"
+                    class="w-full px-5 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+            </div>
+            <div class="space-y-2">
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">ถึงวันที่</label>
+                <input type="date" name="end_date" value="<%= filters.end_date %>"
+                    class="w-full px-5 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+            </div>
+            <div class="space-y-2">
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">สินค้า</label>
+                <select name="product_id"
+                    class="w-full px-5 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                    <option value="">ทั้งหมด</option>
+                    <% products.forEach(p=> { %>
+                        <option value="<%= p.id %>" <%=filters.product_id==p.id ? 'selected' : '' %>><%= p.code %> - <%=
+                                    p.name %>
+                        </option>
+                        <% }) %>
+                </select>
+            </div>
+            <div class="flex space-x-2">
+                <button type="submit"
+                    class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-indigo-100 transition-all active:scale-95">
+                    ค้นหา
+                </button>
+                <a href="/reports/stock-movement"
+                    class="flex items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-3 px-6 rounded-xl transition-all">
+                    ล้างค่า
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-slate-50/50">
+                    <tr>
+                        <th class="px-8 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest">วันที่</th>
+                        <th class="px-4 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest">เลขที่เอกสาร
+                        </th>
+                        <th class="px-4 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest">สินค้า</th>
+                        <th class="px-4 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest text-center">
+                            ประเภท</th>
+                        <th class="px-4 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest text-right">
+                            จำนวน</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    <% if (items.length===0) { %>
+                        <tr>
+                            <td colspan="5" class="px-8 py-20 text-center text-slate-400 font-medium">
+                                ไม่พบข้อมูลความเคลื่อนไหวในช่วงเวลานี้</td>
+                        </tr>
+                        <% } %>
+                            <% items.forEach(item=> { %>
+                                <tr class="hover:bg-slate-50/50 transition-all">
+                                    <td class="px-8 py-6 text-slate-500 text-sm">
+                                        <%= new Date(item.trans_date).toLocaleDateString('th-TH') %>
+                                    </td>
+                                    <td class="px-4 py-6 font-bold text-slate-700">
+                                        <%= item.trans_no %>
+                                    </td>
+                                    <td class="px-4 py-6">
+                                        <p class="text-sm font-bold text-slate-700">
+                                            <%= item.product_name %>
+                                        </p>
+                                        <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-1">
+                                            <%= item.product_code %>
+                                        </p>
+                                    </td>
+                                    <td class="px-4 py-6 text-center">
+                                        <% if (item.trans_stock_type==1) { %>
+                                            <span
+                                                class="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ring-1 ring-emerald-100">รับเข้า
+                                                (IN)</span>
+                                            <% } else { %>
+                                                <span
+                                                    class="bg-rose-50 text-rose-600 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ring-1 ring-rose-100">เบิกออก
+                                                    (OUT)</span>
+                                                <% } %>
+                                    </td>
+                                    <td
+                                        class="px-4 py-6 text-right font-bold <%= item.trans_stock_type == 1 ? 'text-emerald-600' : 'text-rose-600' %>">
+                                        <%= item.trans_stock_type==1 ? '+' : '-' %>
+                                            <%= item.qty.toLocaleString() %>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <%- include('../partials/layout_end') %>

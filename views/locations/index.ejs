@@ -1,0 +1,168 @@
+<%- include('../partials/layout_start') %>
+
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">ตำแหน่งจัดเก็บ</h1>
+            <p class="text-slate-500 mt-1 font-medium">จัดการข้อมูลตำแหน่งจัดเก็บสินค้าในคลัง</p>
+        </div>
+        <button onclick="openAddModal()"
+            class="flex items-center justify-center space-x-2 bg-sky-600 hover:bg-sky-700 text-white px-6 py-3 rounded-2xl shadow-lg shadow-sky-200 transition-all active:scale-95 font-bold">
+            <i class="fa-solid fa-plus text-sm"></i>
+            <span>เพิ่มตำแหน่งจัดเก็บ</span>
+        </button>
+    </div>
+
+    <div class="bg-white rounded-[2rem] shadow-sm border border-sky-50 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-sky-50/50">
+                        <th class="px-6 py-5 text-sky-800 font-bold text-sm uppercase tracking-wider">รหัส</th>
+                        <th class="px-6 py-5 text-sky-800 font-bold text-sm uppercase tracking-wider">ชื่อตำแหน่ง
+                        </th>
+                        <th class="px-6 py-5 text-sky-800 font-bold text-sm uppercase tracking-wider">คลังสินค้า
+                        </th>
+                        <th class="px-6 py-5 text-sky-800 font-bold text-sm uppercase tracking-wider">รายละเอียด
+                        </th>
+                        <th class="px-6 py-5 text-sky-800 font-bold text-sm uppercase tracking-wider text-right">
+                            จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-sky-50">
+                    <% locations.forEach(loc=> { %>
+                        <tr class="hover:bg-sky-50/30 transition-colors group">
+                            <td class="px-6 py-5">
+                                <span
+                                    class="bg-sky-100 text-sky-700 px-3 py-1 rounded-lg text-xs font-bold ring-1 ring-sky-200">
+                                    <%= loc.code %>
+                                </span>
+                            </td>
+                            <td class="px-6 py-5 font-bold text-slate-700">
+                                <%= loc.name %>
+                            </td>
+                            <td class="px-6 py-5 text-slate-600">
+                                <%= loc.warehouse_name || '-' %>
+                            </td>
+                            <td class="px-6 py-5 text-slate-500 text-sm">
+                                <%= loc.description || '-' %>
+                            </td>
+                            <td class="px-6 py-5 text-right">
+                                <div
+                                    class="flex justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button onclick='openEditModal(<%- JSON.stringify(loc) %>)'
+                                        class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-sky-600 hover:border-sky-200 hover:bg-sky-50 transition-all">
+                                        <i class="fa-solid fa-pen-to-square text-sm"></i>
+                                    </button>
+                                    <a href="/locations/delete/<%= loc.id %>"
+                                        onclick="return confirm('ยืนยันการลบข้อมูล?')"
+                                        class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 transition-all">
+                                        <i class="fa-solid fa-trash-can text-sm"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <% }) %>
+                            <% if (locations.length===0) { %>
+                                <tr>
+                                    <td colspan="5" class="px-6 py-20 text-center text-slate-400">
+                                        <i class="fa-solid fa-folder-open text-5xl mb-4 opacity-20 block"></i>
+                                        <span class="font-medium">ไม่พบข้อมูลตำแหน่งจัดเก็บ</span>
+                                    </td>
+                                </tr>
+                                <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <%- include('../partials/pagination') %>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div id="modal"
+        class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+        <div
+            class="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div class="p-8 border-b border-slate-50 flex justify-between items-center">
+                <h3 id="modalTitle" class="text-2xl font-black text-slate-800">เพิ่มตำแหน่งจัดเก็บ</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <form id="modalForm" method="POST" action="/locations/add" class="p-8 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-1">รหัสตำแหน่ง</label>
+                        <input type="text" name="code" id="locCode" required
+                            class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-sky-500 focus:bg-white rounded-2xl outline-none transition-all font-medium"
+                            placeholder="เช่น LOC-001">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-1">คลังสินค้า</label>
+                        <select name="warehouse_id" id="locWarehouse"
+                            class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-sky-500 focus:bg-white rounded-2xl outline-none transition-all font-medium">
+                            <option value="">-- เลือกคลังสินค้า --</option>
+                            <% warehouses.forEach(wh=> { %>
+                                <option value="<%= wh.id %>">
+                                    <%= wh.name %>
+                                </option>
+                                <% }) %>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">ชื่อตำแหน่ง</label>
+                    <input type="text" name="name" id="locName" required
+                        class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-sky-500 focus:bg-white rounded-2xl outline-none transition-all font-medium"
+                        placeholder="ชื่อตำแหน่งจัดเก็บ">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">รายละเอียด</label>
+                    <textarea name="description" id="locDescription" rows="3"
+                        class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-sky-500 focus:bg-white rounded-2xl outline-none transition-all font-medium"
+                        placeholder="รายละเอียดเพิ่มเติม"></textarea>
+                </div>
+
+                <div class="flex space-x-4 pt-4">
+                    <button type="button" onclick="closeModal()"
+                        class="flex-1 px-8 py-4 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl font-bold transition-colors">ยกเลิก</button>
+                    <button type="submit"
+                        class="flex-1 px-8 py-4 bg-sky-600 hover:bg-sky-700 text-white rounded-2xl font-bold shadow-lg shadow-sky-100 transition-all active:scale-95">บันทึกข้อมูล</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('modal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalForm = document.getElementById('modalForm');
+
+        function openAddModal() {
+            modalTitle.innerText = 'เพิ่มตำแหน่งจัดเก็บ';
+            modalForm.action = '/locations/add';
+            document.getElementById('locCode').value = '';
+            document.getElementById('locName').value = '';
+            document.getElementById('locWarehouse').value = '';
+            document.getElementById('locDescription').value = '';
+            modal.classList.remove('hidden');
+        }
+
+        function openEditModal(loc) {
+            modalTitle.innerText = 'แก้ไขตำแหน่งจัดเก็บ';
+            modalForm.action = `/locations/edit/${loc.id}`;
+            document.getElementById('locCode').value = loc.code;
+            document.getElementById('locName').value = loc.name;
+            document.getElementById('locWarehouse').value = loc.warehouse_id || '';
+            document.getElementById('locDescription').value = loc.description || '';
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+        }
+    </script>
+
+    <%- include('../partials/layout_end') %>

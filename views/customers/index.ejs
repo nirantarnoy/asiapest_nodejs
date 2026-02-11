@@ -1,0 +1,225 @@
+<%- include('../partials/layout_start') %>
+
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">ลูกค้า</h1>
+            <p class="text-slate-500 mt-1 font-medium">จัดการข้อมูลฐานลูกค้าทั้งหมด</p>
+        </div>
+        <button onclick="openAddModal()"
+            class="flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-2xl shadow-lg shadow-emerald-200 transition-all active:scale-95 font-bold">
+            <i class="fa-solid fa-plus text-sm"></i>
+            <span>เพิ่มลูกค้าใหม่</span>
+        </button>
+    </div>
+
+    <div class="bg-white rounded-[2rem] shadow-sm border border-emerald-50 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-emerald-50/50">
+                        <th class="px-6 py-5 text-emerald-800 font-bold text-sm uppercase tracking-wider">รหัส /
+                            ชื่อลูกค้า</th>
+                        <th class="px-6 py-5 text-emerald-800 font-bold text-sm uppercase tracking-wider">กลุ่ม / ประเภท
+                        </th>
+                        <th class="px-6 py-5 text-emerald-800 font-bold text-sm uppercase tracking-wider">ติดต่อ</th>
+                        <th class="px-6 py-5 text-emerald-800 font-bold text-sm uppercase tracking-wider text-right">
+                            จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-emerald-50">
+                    <% customers.forEach(customer=> { %>
+                        <tr class="hover:bg-emerald-50/30 transition-colors group">
+                            <td class="px-6 py-5">
+                                <div class="flex items-center space-x-3">
+                                    <div
+                                        class="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 font-bold shrink-0">
+                                        <%= customer.name.charAt(0) %>
+                                    </div>
+                                    <div>
+                                        <div class="text-xs font-bold text-emerald-600 uppercase tracking-tighter">
+                                            <%= customer.code %>
+                                        </div>
+                                        <div class="font-bold text-slate-700 leading-tight">
+                                            <%= customer.name %>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-5">
+                                <div class="space-y-1">
+                                    <span
+                                        class="inline-block px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] font-bold uppercase tracking-wider">
+                                        <%= customer.group_name || 'ทั่วไป' %>
+                                    </span>
+                                    <div class="text-xs text-slate-400 font-medium">
+                                        <%= customer.type_name || '-' %>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-5">
+                                <div class="text-sm font-bold text-slate-600">
+                                    <%= customer.contact_name || '-' %>
+                                </div>
+                                <div class="text-xs text-slate-400">
+                                    <%= customer.phone || customer.email || '-' %>
+                                </div>
+                            </td>
+                            <td class="px-6 py-5 text-right">
+                                <div
+                                    class="flex justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button onclick='openEditModal(<%- JSON.stringify(customer) %>)'
+                                        class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-emerald-600 hover:border-emerald-200 hover:bg-emerald-50 transition-all">
+                                        <i class="fa-solid fa-pen-to-square text-sm"></i>
+                                    </button>
+                                    <a href="/customers/delete/<%= customer.id %>"
+                                        onclick="return confirm('ยืนยันการลบข้อมูล?')"
+                                        class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 transition-all">
+                                        <i class="fa-solid fa-trash-can text-sm"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <% }) %>
+                            <% if (customers.length===0) { %>
+                                <tr>
+                                    <td colspan="4" class="px-6 py-20 text-center text-slate-400">
+                                        <i class="fa-solid fa-users-slash text-5xl mb-4 opacity-20 block"></i>
+                                        <span class="font-medium">ไม่พบข้อมูลลูกค้า</span>
+                                    </td>
+                                </tr>
+                                <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal"
+        class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+        <div
+            class="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200 max-h-[90vh] flex flex-col">
+            <div class="p-8 border-b border-slate-50 flex justify-between items-center bg-white sticky top-0 z-10">
+                <h3 id="modalTitle" class="text-2xl font-black text-slate-800">เพิ่มลูกค้าใหม่</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <form id="modalForm" method="POST" action="/customers/add" class="p-8 space-y-6 overflow-y-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Basic Info -->
+                    <div class="col-span-1 space-y-4">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold text-slate-700 ml-1">รหัสลูกค้า</label>
+                            <input type="text" name="code" id="customerCode" required
+                                class="w-full px-5 py-3.5 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium"
+                                placeholder="เช่น C-001">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold text-slate-700 ml-1">ชื่อลูกค้า / บริษัท</label>
+                            <input type="text" name="name" id="customerName" required
+                                class="w-full px-5 py-3.5 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium"
+                                placeholder="ชื่อ-นามสกุล หรือชื่อบริษัท">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold text-slate-700 ml-1">ประเภทลูกค้า</label>
+                            <select name="customer_type_id" id="customerType"
+                                class="w-full px-5 py-3.5 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium appearance-none">
+                                <option value="">-- เลือกประเภท --</option>
+                                <% types.forEach(t=> { %>
+                                    <option value="<%= t.id %>">
+                                        <%= t.name %>
+                                    </option>
+                                    <% }) %>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Secondary Info -->
+                    <div class="col-span-1 space-y-4">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold text-slate-700 ml-1">กลุ่มลูกค้า</label>
+                            <select name="customer_group_id" id="customerGroup"
+                                class="w-full px-5 py-3.5 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium appearance-none">
+                                <option value="">-- เลือกกลุ่ม --</option>
+                                <% groups.forEach(g=> { %>
+                                    <option value="<%= g.id %>">
+                                        <%= g.name %>
+                                    </option>
+                                    <% }) %>
+                            </select>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold text-slate-700 ml-1">ชื่อผู้ติดต่อ</label>
+                            <input type="text" name="contact_name" id="customerContact"
+                                class="w-full px-5 py-3.5 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium"
+                                placeholder="ชื่อบุคคลที่ติดต่อได้">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold text-slate-700 ml-1">เบอร์โทรศัพท์</label>
+                            <input type="text" name="phone" id="customerPhone"
+                                class="w-full px-5 py-3.5 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium"
+                                placeholder="เช่น 02-xxx-xxxx">
+                        </div>
+                    </div>
+
+                    <!-- Detailed Info -->
+                    <div class="col-span-1 md:col-span-2 space-y-4">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold text-slate-700 ml-1">อีเมล</label>
+                            <input type="email" name="email" id="customerEmail"
+                                class="w-full px-5 py-3.5 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium"
+                                placeholder="customer@example.com">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold text-slate-700 ml-1">ที่อยู่</label>
+                            <textarea name="address" id="customerAddress" rows="3"
+                                class="w-full px-5 py-3.5 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium"
+                                placeholder="เลขที่บ้าน ถนน แขวง/ตำบล..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex space-x-4 pt-6 bg-white sticky bottom-0 z-10">
+                    <button type="button" onclick="closeModal()"
+                        class="flex-1 px-8 py-4 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl font-bold transition-colors">ยกเลิก</button>
+                    <button type="submit"
+                        class="flex-1 px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-bold shadow-lg shadow-emerald-100 transition-all active:scale-95">บันทึกข้อมูล</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('modal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalForm = document.getElementById('modalForm');
+
+        function openAddModal() {
+            modalTitle.innerText = 'เพิ่มลูกค้าใหม่';
+            modalForm.action = '/customers/add';
+            modalForm.reset();
+            modal.classList.remove('hidden');
+        }
+
+        function openEditModal(customer) {
+            modalTitle.innerText = 'แก้ไขข้อมูลลูกค้า';
+            modalForm.action = `/customers/edit/${customer.id}`;
+
+            document.getElementById('customerCode').value = customer.code;
+            document.getElementById('customerName').value = customer.name;
+            document.getElementById('customerType').value = customer.customer_type_id || '';
+            document.getElementById('customerGroup').value = customer.customer_group_id || '';
+            document.getElementById('customerContact').value = customer.contact_name || '';
+            document.getElementById('customerPhone').value = customer.phone || '';
+            document.getElementById('customerEmail').value = customer.email || '';
+            document.getElementById('customerAddress').value = customer.address || '';
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+        }
+    </script>
+
+    <%- include('../partials/layout_end') %>

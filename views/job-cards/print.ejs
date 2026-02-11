@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ใบสั่งงานบริการ - <%= item.job_card_no %>
+    </title>
+    <style>
+        :root {
+            --primary-color: #f59e0b;
+            /* Amber/Orange for Job Card */
+            --primary-dark: #d97706;
+            --slate-600: #475569;
+            --slate-700: #334155;
+            --slate-800: #1e293b;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            padding: 30px;
+            color: var(--slate-800);
+            line-height: 1.4;
+            background-color: white;
+            font-size: 13px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 15px;
+        }
+
+        .company-info h1 {
+            margin: 0 0 4px 0;
+            color: var(--primary-dark);
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .company-info p {
+            margin: 1px 0;
+            color: var(--slate-600);
+            font-size: 12px;
+        }
+
+        .document-title {
+            text-align: right;
+        }
+
+        .document-title h2 {
+            margin: 0 0 5px 0;
+            color: var(--primary-color);
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .document-title p {
+            margin: 2px 0;
+            font-size: 13px;
+            color: var(--slate-700);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .info-box h3 {
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--slate-600);
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: var(--slate-700);
+            padding: 10px 8px;
+            border-top: 1px solid #e2e8f0;
+            border-bottom: 2px solid #e2e8f0;
+            font-size: 12px;
+        }
+
+        td {
+            padding: 8px 8px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .signature-grid {
+            margin-top: 60px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 40px;
+        }
+
+        .sig-box {
+            text-align: center;
+        }
+
+        .sig-line {
+            border-bottom: 1px solid #cbd5e1;
+            height: 40px;
+            margin-bottom: 10px;
+        }
+
+        @media print {
+            .no-print {
+                display: none;
+            }
+
+            body {
+                padding: 0;
+            }
+
+            @page {
+                size: A4;
+                margin: 1.5cm;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="company-info">
+            <h1>
+                <%= company.name %>
+            </h1>
+            <p>
+                <%= company.eng_name || '' %>
+            </p>
+            <p>
+                <%= company.address %>
+            </p>
+            <p>โทร: <%= company.phone %> | อีเมล: <%= company.email || '-' %>
+            </p>
+        </div>
+        <div class="document-title">
+            <h2>ใบสั่งงานบริการ</h2>
+            <p><strong>JOB CARD NO. :</strong>
+                <%= item.job_card_no %>
+            </p>
+            <p><strong>วันที่ออกเอกสาร :</strong>
+                <%= new Date().toLocaleDateString('th-TH') %>
+            </p>
+        </div>
+    </div>
+
+    <div class="info-grid">
+        <div class="info-box">
+            <h3>ลูกค้า / CUSTOMER</h3>
+            <p><strong>
+                    <%= item.customer_name %>
+                </strong></p>
+            <p style="font-size: 12px; color: var(--slate-600);">
+                <%= item.customer_address || '-' %>
+            </p>
+            <p>โทร: <%= item.customer_phone || '-' %>
+            </p>
+        </div>
+        <div class="info-box text-right">
+            <h3>ข้อมูลสัญญา / CONTRACT INFO</h3>
+            <p><strong>เลขที่สัญญา:</strong>
+                <%= item.contract_no || '-' %>
+            </p>
+            <p><strong>สถานะ:</strong>
+                <% if(item.status===1) { %>ดำเนินการ<% } else if(item.status===2) { %>เสร็จสิ้น<% } else { %>ยกเลิก<% }
+                                %>
+            </p>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th class="text-center" style="width: 50px;">ลำดับ</th>
+                <th style="width: 100px;">วันที่ทำบริการ</th>
+                <th style="width: 120px;">ช่วงเวลา</th>
+                <th>รายละเอียดงาน</th>
+                <th style="width: 150px;">พนักงานผู้ให้บริการ</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% lines.forEach((line, index)=> { %>
+                <tr>
+                    <td class="text-center">
+                        <%= line.job_count %>
+                    </td>
+                    <td>
+                        <%= line.job_date ? new Date(line.job_date).toLocaleDateString('th-TH') : '-' %>
+                    </td>
+                    <td>
+                        <%= (line.time_in ? line.time_in.slice(0, 5) : '-' ) + ' - ' + (line.time_out ?
+                            line.time_out.slice(0, 5) : '-' ) %>
+                    </td>
+                    <td>
+                        <%= line.job_description || '-' %>
+                            <% if(line.plan_no) { %>
+                                <br><small style="color: var(--slate-600);">Plan No: <%= line.plan_no %></small>
+                                <% } %>
+                    </td>
+                    <td>
+                        <%= (line.emp_fname || '' ) + ' ' + (line.emp_lname || '' ) %>
+                    </td>
+                </tr>
+                <% }) %>
+        </tbody>
+    </table>
+
+    <div class="signature-grid">
+        <div class="sig-box">
+            <div class="sig-line"></div>
+            <p>ผู้สั่งงาน / Ordered By</p>
+            <p>วันที่ ......../......../........</p>
+        </div>
+        <div class="sig-box">
+            <div class="sig-line"></div>
+            <p>พนักงานบริการ / Service Staff</p>
+            <p>วันที่ ......../......../........</p>
+        </div>
+        <div class="sig-box">
+            <div class="sig-line"></div>
+            <p>ผู้รับบริการ / Customer</p>
+            <p>วันที่ ......../......../........</p>
+        </div>
+    </div>
+
+    <div class="no-print" style="margin-top: 50px; text-align: center; padding-bottom: 50px;">
+        <button onclick="window.print()"
+            style="padding: 12px 25px; background: var(--primary-color); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+            พิมพ์เอกสาร
+        </button>
+    </div>
+</body>
+
+</html>

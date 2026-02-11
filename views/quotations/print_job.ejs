@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายละเอียดและวิธีทำบริการ - <%= quotation.quotation_no %>
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #059669;
+            --primary-dark: #064e3b;
+            --slate-600: #475569;
+            --slate-700: #334155;
+            --slate-800: #1e293b;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            padding: 40px;
+            color: var(--slate-800);
+            line-height: 1.6;
+            background-color: white;
+            font-size: 14px;
+        }
+
+        h1,
+        h2,
+        h3,
+        .brand-font {
+            font-family: 'Prompt', sans-serif;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 20px;
+        }
+
+        .company-info h1 {
+            margin: 0 0 4px 0;
+            color: var(--primary-dark);
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .company-info p {
+            margin: 1px 0;
+            color: var(--slate-600);
+            font-size: 12px;
+        }
+
+        .document-title {
+            text-align: right;
+        }
+
+        .document-title h2 {
+            margin: 0 0 5px 0;
+            color: var(--primary-color);
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .document-title p {
+            margin: 2px 0;
+            font-size: 13px;
+        }
+
+        .section-title {
+            background-color: #f8fafc;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin: 30px 0 20px 0;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .section-title h3 {
+            margin: 0;
+            font-size: 18px;
+            color: var(--slate-800);
+        }
+
+        .job-item {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .job-title {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--primary-dark);
+        }
+
+        .job-meta {
+            font-size: 13px;
+            color: var(--slate-600);
+            font-weight: 500;
+        }
+
+        .job-description {
+            color: var(--slate-700);
+            white-space: pre-wrap;
+            padding-left: 15px;
+            border-left: 2px solid #e2e8f0;
+        }
+
+        .footer {
+            margin-top: 60px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .signature-box {
+            text-align: center;
+        }
+
+        .signature-line {
+            border-bottom: 1px solid #cbd5e1;
+            margin-bottom: 10px;
+            height: 60px;
+        }
+
+        @media print {
+            body {
+                padding: 0;
+            }
+
+            .no-print {
+                display: none;
+            }
+
+            @page {
+                size: A4;
+                margin: 1.5cm;
+            }
+        }
+    </style>
+</head>
+
+<body onload="window.print()">
+    <div class="header">
+        <div class="company-info">
+            <h1>
+                <%= company.name %>
+            </h1>
+            <p>
+                <%= company.eng_name || '' %>
+            </p>
+            <p>
+                <%= company.address %>
+            </p>
+            <p>โทร: <%= company.phone %> | อีเมล: <%= company.email || '-' %>
+            </p>
+        </div>
+        <div class="document-title">
+            <h2>รายละเอียดและวิธีทำบริการ</h2>
+            <p>อ้างอิงใบเสนอราคา: <strong>
+                    <%= quotation.quotation_no %>
+                </strong></p>
+            <p>ลูกค้า: <strong>
+                    <%= quotation.customer_name %>
+                </strong></p>
+        </div>
+    </div>
+
+    <div class="section-title">
+        <h3>ขอบเขตและวิธีการดำเนินงาน</h3>
+    </div>
+
+    <div class="job-list">
+        <% if (jobLines && jobLines.length> 0) { %>
+            <% jobLines.forEach((line, index)=> { %>
+                <div class="job-item">
+                    <div class="job-header">
+                        <span class="job-title">
+                            <%= (index + 1) %>. <%= line.task_title || line.job_title %>
+                        </span>
+                        <span class="job-meta">
+                            วิธีการ: <%= line.task_method_name || '-' %> |
+                                ความถี่: <%= line.job_interval %> รอบ/<%= line.interval_type==1 ? 'วัน' :
+                                        line.interval_type==2 ? 'สัปดาห์' : line.interval_type==3 ? 'เดือน' :
+                                        line.interval_type==4 ? 'ปี' : 'ครั้ง' %>
+                        </span>
+                    </div>
+                    <div class="job-description">
+                        <%= line.description %>
+                    </div>
+                </div>
+                <% }) %>
+                    <% } else { %>
+                        <p class="text-center" style="color: var(--slate-400); padding: 40px;">ไม่มีข้อมูลรายละเอียดงาน
+                        </p>
+                        <% } %>
+    </div>
+
+    <div class="footer">
+        <div class="signature-box">
+            <p style="font-weight: 600;">เจ้าหน้าที่ฝ่ายเทคนิค / Technical Officer</p>
+            <div class="signature-line"></div>
+            <p>(..................................................)</p>
+            <p>วันที่ ......../......../........</p>
+        </div>
+        <div class="signature-box">
+            <p style="font-weight: 600;">ผู้รับบริการ / Client</p>
+            <div class="signature-line"></div>
+            <p>(..................................................)</p>
+            <p>วันที่ ......../......../........</p>
+        </div>
+    </div>
+
+    <div class="no-print" style="margin-top: 50px; text-align: center; padding-bottom: 50px;">
+        <button onclick="window.print()"
+            style="padding: 12px 25px; background: var(--primary-color); color: white; border: none; border-radius: 12px; cursor: pointer; font-family: 'Prompt'; font-weight: 600; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
+            สั่งพิมพ์เอกสาร
+        </button>
+        <button onclick="window.close()"
+            style="padding: 12px 25px; background: #64748b; color: white; border: none; border-radius: 12px; cursor: pointer; margin-left: 10px; font-family: 'Prompt'; font-weight: 600;">
+            ปิดหน้านี้
+        </button>
+    </div>
+</body>
+
+</html>

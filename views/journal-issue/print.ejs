@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ใบเบิกสินค้า - <%= item.journal_issue_no %>
+    </title>
+    <style>
+        :root {
+            --primary-color: #f59e0b;
+            /* Amber for Issue, reusing Job Card base tone but specific */
+            --primary-dark: #d97706;
+            --slate-600: #475569;
+            --slate-700: #334155;
+            --slate-800: #1e293b;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            padding: 30px;
+            color: var(--slate-800);
+            line-height: 1.4;
+            background-color: white;
+            font-size: 13px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 15px;
+        }
+
+        .company-info h1 {
+            margin: 0 0 4px 0;
+            color: var(--primary-dark);
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .company-info p {
+            margin: 1px 0;
+            color: var(--slate-600);
+            font-size: 12px;
+        }
+
+        .document-title {
+            text-align: right;
+        }
+
+        .document-title h2 {
+            margin: 0 0 5px 0;
+            color: var(--primary-color);
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .document-title p {
+            margin: 2px 0;
+            font-size: 13px;
+            color: var(--slate-700);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .info-box h3 {
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--slate-600);
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: var(--slate-700);
+            padding: 10px 8px;
+            border-top: 1px solid #e2e8f0;
+            border-bottom: 2px solid #e2e8f0;
+            font-size: 12px;
+        }
+
+        td {
+            padding: 8px 8px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .signature-grid {
+            margin-top: 60px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+        }
+
+        .sig-box {
+            text-align: center;
+        }
+
+        .sig-line {
+            border-bottom: 1px solid #cbd5e1;
+            height: 40px;
+            margin-bottom: 10px;
+        }
+
+        @media print {
+            .no-print {
+                display: none;
+            }
+
+            body {
+                padding: 0;
+            }
+
+            @page {
+                size: A4;
+                margin: 1.5cm;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="company-info">
+            <h1>
+                <%= company.name %>
+            </h1>
+            <p>
+                <%= company.eng_name || '' %>
+            </p>
+            <p>
+                <%= company.address %>
+            </p>
+            <p>โทร: <%= company.phone %> | อีเมล: <%= company.email || '-' %>
+            </p>
+        </div>
+        <div class="document-title">
+            <h2>ใบเบิกสินค้า</h2>
+            <p><strong>ISSUE NO. :</strong>
+                <%= item.journal_issue_no %>
+            </p>
+            <p><strong>DATE :</strong>
+                <%= new Date(item.trans_date).toLocaleDateString('th-TH') %>
+            </p>
+        </div>
+    </div>
+
+    <div class="info-grid">
+        <div class="info-box">
+            <h3>ผู้เบิก / REQUESTER</h3>
+            <p><strong>
+                    <%= (item.creator_fname || '' ) + ' ' + (item.creator_lname || '' ) %>
+                </strong></p>
+            <p>เหตุผล: <%= item.reason || '-' %>
+            </p>
+        </div>
+        <div class="info-box text-right">
+            <h3>สถานะ / STATUS</h3>
+            <p>
+                <% if(item.status===1) { %>ปกติ<% } else { %>ยกเลิก<% } %>
+            </p>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th class="text-center" style="width: 50px;">ลำดับ</th>
+                <th>รหัสสินค้า</th>
+                <th>รายการสินค้า</th>
+                <th class="text-center">จำนวนที่เบิก</th>
+                <th>หมายเหตุ</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% lines.forEach((line, index)=> { %>
+                <tr>
+                    <td class="text-center">
+                        <%= index + 1 %>
+                    </td>
+                    <td>
+                        <%= line.product_code %>
+                    </td>
+                    <td>
+                        <%= line.product_name %>
+                    </td>
+                    <td class="text-center">
+                        <%= line.qty.toLocaleString() %>
+                    </td>
+                    <td>
+                        <%= line.note || '-' %>
+                    </td>
+                </tr>
+                <% }) %>
+        </tbody>
+    </table>
+
+    <div class="signature-grid">
+        <div class="sig-box">
+            <div class="sig-line"></div>
+            <p>ผู้เบิก / Requested By</p>
+            <p>วันที่ ......../......../........</p>
+        </div>
+        <div class="sig-box">
+            <div class="sig-line"></div>
+            <p>ผู้อนุมัติ / Approved By</p>
+            <p>วันที่ ......../......../........</p>
+        </div>
+    </div>
+
+    <div class="no-print" style="margin-top: 50px; text-align: center; padding-bottom: 50px;">
+        <button onclick="window.print()"
+            style="padding: 12px 25px; background: var(--primary-color); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+            พิมพ์เอกสาร
+        </button>
+    </div>
+</body>
+
+</html>

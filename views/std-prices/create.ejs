@@ -1,0 +1,148 @@
+<%- include('../partials/layout_start') %>
+
+    <form action="/std-prices/add" method="POST" class="max-w-6xl mx-auto">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div>
+                <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">เพิ่มราคากลาง</h1>
+                <p class="text-slate-500 mt-1 font-medium">จัดการข้อมูราคากลางงานบริการในระบบ</p>
+            </div>
+            <div class="flex space-x-3">
+                <a href="/std-prices"
+                    class="flex items-center justify-center space-x-2 bg-white border border-slate-200 text-slate-600 px-6 py-3 rounded-2xl shadow-sm hover:bg-slate-50 transition-all font-bold">
+                    <span>ยกเลิก</span>
+                </a>
+                <button type="submit"
+                    class="flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-2xl shadow-lg shadow-emerald-200 transition-all active:scale-95 font-bold">
+                    <i class="fa-solid fa-save text-sm"></i>
+                    <span>บันทึกข้อมูล</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Header Info -->
+            <div class="lg:col-span-1 space-y-6">
+                <div class="bg-white rounded-[2rem] shadow-sm border border-emerald-50 p-8 space-y-6">
+                    <h3 class="text-lg font-bold text-slate-800 border-b border-slate-50 pb-4">ข้อมูลทั่วไป</h3>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-1">เลขที่เอกสาร</label>
+                        <input type="text" name="journal_no" required
+                            class="w-full px-5 py-3 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium"
+                            placeholder="เช่น STD-2024-001">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-1">มีผลตั้งแต่วันที่</label>
+                        <input type="date" name="from_date" required
+                            class="w-full px-5 py-3 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-1">ถึงวันที่</label>
+                        <input type="date" name="to_date"
+                            class="w-full px-5 py-3 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lines -->
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white rounded-[2rem] shadow-sm border border-emerald-50 p-8 space-y-6">
+                    <div class="flex items-center justify-between border-b border-slate-50 pb-4">
+                        <h3 class="text-lg font-bold text-slate-800">รายการบริการ / สินค้า</h3>
+                        <button type="button" onclick="addRow()"
+                            class="text-emerald-600 hover:text-emerald-700 font-bold text-sm flex items-center space-x-1">
+                            <i class="fa-solid fa-plus-circle"></i>
+                            <span>เพิ่มรายการ</span>
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full" id="linesTable">
+                            <thead>
+                                <tr class="text-left">
+                                    <th class="pb-4 text-xs font-bold text-slate-400 uppercase tracking-widest pl-2">
+                                        บริการ/สินค้า</th>
+                                    <th
+                                        class="pb-4 text-xs font-bold text-slate-400 uppercase tracking-widest px-2 w-32">
+                                        ราคา 1</th>
+                                    <th
+                                        class="pb-4 text-xs font-bold text-slate-400 uppercase tracking-widest px-2 w-32">
+                                        ราคา 2</th>
+                                    <th
+                                        class="pb-4 text-xs font-bold text-slate-400 uppercase tracking-widest px-2 w-32">
+                                        ราคา 3</th>
+                                    <th class="pb-4"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="linesContainer" class="space-y-4">
+                                <!-- Rows will be added here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <template id="lineRowTemplate">
+        <tr class="group border-b border-slate-50 last:border-0">
+            <td class="py-4 pr-2">
+                <select name="lines[INDEX][item_id]" required
+                    class="w-full px-4 py-3 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-xl outline-none transition-all font-medium appearance-none">
+                    <option value="">เลือกบริการ/สินค้า</option>
+                    <% products.forEach(p=> { %>
+                        <option value="<%= p.id %>">
+                            <%= p.code %> - <%= p.name %>
+                        </option>
+                        <% }) %>
+                </select>
+            </td>
+            <td class="py-4 px-2">
+                <input type="number" name="lines[INDEX][price1]" step="0.01" value="0"
+                    class="w-full px-4 py-3 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-xl outline-none transition-all font-medium text-right">
+            </td>
+            <td class="py-4 px-2">
+                <input type="number" name="lines[INDEX][price2]" step="0.01" value="0"
+                    class="w-full px-4 py-3 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-xl outline-none transition-all font-medium text-right">
+            </td>
+            <td class="py-4 px-2">
+                <input type="number" name="lines[INDEX][price3]" step="0.01" value="0"
+                    class="w-full px-4 py-3 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-xl outline-none transition-all font-medium text-right">
+            </td>
+            <td class="py-4 pl-2 text-right">
+                <button type="button" onclick="removeRow(this)"
+                    class="w-10 h-10 flex items-center justify-center rounded-xl text-slate-300 hover:text-rose-500 hover:bg-rose-50 transition-all">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </td>
+        </tr>
+    </template>
+
+    <script>
+        let rowIndex = 0;
+        const container = document.getElementById('linesContainer');
+        const template = document.getElementById('lineRowTemplate').innerHTML;
+
+        function addRow() {
+            const html = template.replace(/INDEX/g, rowIndex);
+            const tr = document.createElement('tr');
+            tr.innerHTML = html;
+            // Get the first tr child of the created div/element if template is multiple lines
+            const actualTr = tr.querySelector('tr') || tr;
+            container.appendChild(actualTr);
+            rowIndex++;
+        }
+
+        function removeRow(btn) {
+            btn.closest('tr').remove();
+        }
+
+        // Initialize with one row
+        window.onload = () => {
+            addRow();
+        };
+    </script>
+
+    <%- include('../partials/layout_end') %>

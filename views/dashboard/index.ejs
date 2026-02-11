@@ -1,0 +1,255 @@
+<%- include('../partials/layout_start') %>
+
+    <div class="mb-8">
+        <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Dashboard</h1>
+        <p class="text-slate-500 mt-1 font-medium">ภาพรวมการนัดหมายและกิจกรรมในระบบ</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+        <!-- Customers Card -->
+        <div
+            class="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-500">
+            <div
+                class="absolute -right-4 -top-4 w-24 h-24 bg-indigo-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-700">
+            </div>
+            <div class="relative z-10 flex items-center space-x-4">
+                <div
+                    class="w-14 h-14 bg-indigo-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+                    <i class="fa-solid fa-users text-2xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-slate-400 font-bold text-xs uppercase tracking-widest">ลูกค้าทั้งหมด</h3>
+                    <p class="text-3xl font-black text-slate-800 mt-1">
+                        <%= stats.customers %>
+                    </p>
+                </div>
+            </div>
+            <div class="mt-6 flex items-center text-emerald-500 text-xs font-bold">
+                <i class="fa-solid fa-arrow-up mr-1"></i>
+                <span>Active Customers</span>
+            </div>
+        </div>
+
+        <!-- Products Card -->
+        <div
+            class="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-xl hover:shadow-emerald-500/10 transition-all duration-500">
+            <div
+                class="absolute -right-4 -top-4 w-24 h-24 bg-emerald-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-700">
+            </div>
+            <div class="relative z-10 flex items-center space-x-4">
+                <div
+                    class="w-14 h-14 bg-emerald-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-emerald-200">
+                    <i class="fa-solid fa-box-open text-2xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-slate-400 font-bold text-xs uppercase tracking-widest">สินค้าในคลัง</h3>
+                    <p class="text-3xl font-black text-slate-800 mt-1">
+                        <%= stats.products %>
+                    </p>
+                </div>
+            </div>
+            <div class="mt-6 flex items-center text-indigo-500 text-xs font-bold">
+                <i class="fa-solid fa-boxes-stacked mr-1"></i>
+                <span>Total SKUs</span>
+            </div>
+        </div>
+
+        <!-- Contracts Card -->
+        <div
+            class="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-xl hover:shadow-amber-500/10 transition-all duration-500">
+            <div
+                class="absolute -right-4 -top-4 w-24 h-24 bg-amber-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-700">
+            </div>
+            <div class="relative z-10 flex items-center space-x-4">
+                <div
+                    class="w-14 h-14 bg-amber-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-amber-200">
+                    <i class="fa-solid fa-file-signature text-2xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-slate-400 font-bold text-xs uppercase tracking-widest">รอดำเนินการ</h3>
+                    <p class="text-3xl font-black text-slate-800 mt-1">
+                        <%= stats.contracts %>
+                    </p>
+                </div>
+            </div>
+            <div class="mt-6 flex items-center text-amber-500 text-xs font-bold">
+                <i class="fa-solid fa-clock mr-1"></i>
+                <span>Active Contracts</span>
+            </div>
+        </div>
+
+        <!-- PO Card -->
+        <div
+            class="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-xl hover:shadow-rose-500/10 transition-all duration-500">
+            <div
+                class="absolute -right-4 -top-4 w-24 h-24 bg-rose-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-700">
+            </div>
+            <div class="relative z-10 flex items-center space-x-4">
+                <div
+                    class="w-14 h-14 bg-rose-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-rose-200">
+                    <i class="fa-solid fa-cart-shopping text-2xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-slate-400 font-bold text-xs uppercase tracking-widest">ใบสั่งซื้อค้าง</h3>
+                    <p class="text-3xl font-black text-slate-800 mt-1">
+                        <%= stats.pos %>
+                    </p>
+                </div>
+            </div>
+            <div class="mt-6 flex items-center text-rose-500 text-xs font-bold">
+                <i class="fa-solid fa-triangle-exclamation mr-1"></i>
+                <span>Pending POs</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-8">
+        <div class="bg-white rounded-[2rem] shadow-sm border border-emerald-50 p-8">
+            <div id="calendar" class="min-h-[600px]"></div>
+        </div>
+    </div>
+
+    <!-- Event Detail Modal -->
+    <div id="eventModal" class="hidden fixed inset-0 z-[60] overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" id="closeModalBg"></div>
+            <div
+                class="relative bg-white rounded-[2.5rem] shadow-2xl w-full max-w-3xl overflow-hidden animate-in zoom-in duration-300">
+                <div class="p-8 border-b border-emerald-50 flex justify-between items-center bg-emerald-50/30">
+                    <h3 class="text-xl font-bold text-emerald-900">รายละเอียดเหตุการณ์</h3>
+                    <button type="button" class="closeModal text-slate-400 hover:text-rose-500 transition-colors">
+                        <i class="fa-solid fa-circle-xmark text-2xl"></i>
+                    </button>
+                </div>
+                <div class="p-8">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left" id="eventTable">
+                            <thead class="bg-emerald-50/10">
+                                <tr>
+                                    <th class="px-4 py-3 text-emerald-800 font-bold text-xs uppercase text-center">
+                                        วันที่</th>
+                                    <th class="px-4 py-3 text-emerald-800 font-bold text-xs uppercase text-center">
+                                        รายละเอียด</th>
+                                    <th class="px-4 py-3 text-emerald-800 font-bold text-xs uppercase">ลูกค้า</th>
+                                    <th class="px-4 py-3 text-emerald-800 font-bold text-xs uppercase">ประเภท</th>
+                                    <th class="px-4 py-3 text-emerald-800 font-bold text-xs uppercase text-center">สถานะ
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-emerald-50">
+                                <!-- Data inject here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="p-8 bg-slate-50 flex justify-end">
+                    <button type="button"
+                        class="closeModal bg-white border border-slate-200 text-slate-600 px-6 py-2 rounded-xl font-bold hover:bg-slate-100 transition-all">
+                        ปิดหน้าต่าง
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FullCalendar Deps -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const calendarEl = document.getElementById('calendar');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'th',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: JSON.parse('<%- JSON.stringify(events.map(e => ({ id: e.id, title: e.title, start: e.start, color: e.backgroundColor, textColor: e.textColor }))) %>'),
+                eventClick: function (info) {
+                    showEventDetail(info.event);
+                },
+                dateClick: function (info) {
+                    showEventDetailForDate(info.dateStr);
+                }
+            });
+            calendar.render();
+
+            function showEventDetail(event) {
+                const y = event.start.getFullYear();
+                const m = String(event.start.getMonth() + 1).padStart(2, '0');
+                const d = String(event.start.getDate()).padStart(2, '0');
+                const dateStr = `${y}-${m}-${d}`;
+                showEventDetailForDate(dateStr);
+            }
+
+            function showEventDetailForDate(dateStr) {
+                fetch('/dashboard/find-event', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ event_date: dateStr })
+                })
+                    .then(res => res.text())
+                    .then(html => {
+                        document.querySelector('#eventTable tbody').innerHTML = html;
+                        document.getElementById('eventModal').classList.remove('hidden');
+                    });
+            }
+
+            // Modal Logic
+            const closeBtns = document.querySelectorAll('.closeModal, #closeModalBg');
+            closeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.getElementById('eventModal').classList.add('hidden');
+                });
+            });
+        });
+    </script>
+
+    <style>
+        .fc .fc-toolbar-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #065f46;
+            font-family: 'Prompt', sans-serif;
+        }
+
+        .fc .fc-button-primary {
+            background-color: #10b981;
+            border-color: #10b981;
+            font-weight: 700;
+            border-radius: 0.75rem;
+            text-transform: capitalize;
+            padding: 0.5rem 1rem;
+        }
+
+        .fc .fc-button-primary:hover {
+            background-color: #059669;
+            border-color: #059669;
+        }
+
+        .fc .fc-button-primary:disabled {
+            background-color: #34d399;
+            border-color: #34d399;
+        }
+
+        .fc-theme-standard td,
+        .fc-theme-standard th {
+            border-color: #ecfdf5;
+        }
+
+        .fc-daygrid-day-number {
+            font-weight: 600;
+            color: #64748b;
+            padding: 10px !important;
+        }
+
+        .fc-event {
+            border-radius: 6px;
+            padding: 2px 4px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+    </style>
+
+    <%- include('../partials/layout_end') %>

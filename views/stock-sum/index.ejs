@@ -1,0 +1,91 @@
+<%- include('../partials/layout_start') %>
+
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">สินค้าคงเหลือ</h1>
+            <p class="text-slate-500 mt-1 font-medium">ดูจำนวนสินค้าคงเหลือในแต่ละคลัง</p>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-[2rem] shadow-sm border border-cyan-50 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-cyan-50/50">
+                        <th class="px-6 py-5 text-cyan-800 font-bold text-sm uppercase tracking-wider">รหัสสินค้า</th>
+                        <th class="px-6 py-5 text-cyan-800 font-bold text-sm uppercase tracking-wider">ชื่อสินค้า</th>
+                        <th class="px-6 py-5 text-cyan-800 font-bold text-sm uppercase tracking-wider">คลังสินค้า</th>
+                        <th class="px-6 py-5 text-cyan-800 font-bold text-sm uppercase tracking-wider">ตำแหน่ง</th>
+                        <th class="px-6 py-5 text-cyan-800 font-bold text-sm uppercase tracking-wider text-right">
+                            จำนวนคงเหลือ</th>
+                        <th class="px-6 py-5 text-cyan-800 font-bold text-sm uppercase tracking-wider text-center">สถานะ
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-cyan-50">
+                    <% stocks.forEach(stock=> { %>
+                        <tr class="hover:bg-cyan-50/30 transition-colors">
+                            <td class="px-6 py-5">
+                                <span
+                                    class="bg-cyan-100 text-cyan-700 px-3 py-1 rounded-lg text-xs font-bold ring-1 ring-cyan-200 font-mono">
+                                    <%= stock.product_code || '-' %>
+                                </span>
+                            </td>
+                            <td class="px-6 py-5 font-bold text-slate-700">
+                                <%= stock.product_name || '-' %>
+                            </td>
+                            <td class="px-6 py-5 text-slate-600">
+                                <%= stock.warehouse_name || '-' %>
+                            </td>
+                            <td class="px-6 py-5 text-slate-600">
+                                <%= stock.location_name || '-' %>
+                            </td>
+                            <td class="px-6 py-5 text-right">
+                                <% const qty=stock.qty || 0; %>
+                                    <span
+                                        class="font-bold text-lg <%= qty > 0 ? 'text-green-600' : qty < 0 ? 'text-red-600' : 'text-slate-400' %>">
+                                        <%= qty.toLocaleString('th-TH', { minimumFractionDigits: 2,
+                                            maximumFractionDigits: 2 }) %>
+                                    </span>
+                            </td>
+                            <td class="px-6 py-5 text-center">
+                                <% const qty2=stock.qty || 0; %>
+                                    <% if (qty2> 10) { %>
+                                        <span
+                                            class="bg-green-100 text-green-700 px-3 py-1 rounded-lg text-xs font-bold ring-1 ring-green-200">
+                                            <i class="fa-solid fa-check-circle mr-1"></i>
+                                            เพียงพอ
+                                        </span>
+                                        <% } else if (qty2> 0) { %>
+                                            <span
+                                                class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-lg text-xs font-bold ring-1 ring-yellow-200">
+                                                <i class="fa-solid fa-exclamation-triangle mr-1"></i>
+                                                ใกล้หมด
+                                            </span>
+                                            <% } else { %>
+                                                <span
+                                                    class="bg-red-100 text-red-700 px-3 py-1 rounded-lg text-xs font-bold ring-1 ring-red-200">
+                                                    <i class="fa-solid fa-times-circle mr-1"></i>
+                                                    หมดสต๊อก
+                                                </span>
+                                                <% } %>
+                            </td>
+                        </tr>
+                        <% }) %>
+                            <% if (stocks.length===0) { %>
+                                <tr>
+                                    <td colspan="6" class="px-6 py-20 text-center text-slate-400">
+                                        <i class="fa-solid fa-folder-open text-5xl mb-4 opacity-20 block"></i>
+                                        <span class="font-medium">ไม่พบข้อมูลสินค้าคงเหลือ</span>
+                                    </td>
+                                </tr>
+                                <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <%- include('../partials/pagination') %>
+    </div>
+
+    <%- include('../partials/layout_end') %>

@@ -1,0 +1,201 @@
+<%- include('../partials/layout_start') %>
+
+    <div class="mb-8">
+        <a href="/pur-orders"
+            class="text-slate-400 hover:text-emerald-600 transition-colors flex items-center mb-4 group">
+            <i class="fa-solid fa-arrow-left mr-2 group-hover:-translate-x-1 transition-transform"></i>
+            <span class="font-bold text-sm uppercase tracking-widest">กลับไปหน้ารายการ</span>
+        </a>
+        <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">แก้ไขใบสั่งซื้อ: <%= item.purch_no %>
+        </h1>
+        <p class="text-slate-500 mt-1 font-medium">ปรับปรุงข้อมูลรายการสั่งซื้อสินค้า</p>
+    </div>
+
+    <form action="/pur-orders/edit/<%= item.id %>" method="POST" class="space-y-8 pb-20">
+        <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">เวนเดอร์ (Vendor)</label>
+                    <select name="vendor_id"
+                        class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all shadow-inner"
+                        required>
+                        <option value="">เลือกเวนเดอร์...</option>
+                        <% vendors.forEach(v=> { %>
+                            <option value="<%= v.id %>" <%=v.id===item.vendor_id ? 'selected' : '' %>><%= v.name %>
+                            </option>
+                            <% }) %>
+                    </select>
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">วันที่ใบสั่งซื้อ</label>
+                    <input type="date" name="purch_date"
+                        value="<%= new Date(item.purch_date).toISOString().split('T')[0] %>" required
+                        class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">สถานะ</label>
+                    <div class="px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl">
+                        <% if (item.status===1) { %>
+                            <span class="text-amber-600 font-bold">รอดำเนินการ</span>
+                            <% } else if (item.status===2) { %>
+                                <span class="text-blue-600 font-bold">สั่งซื้อแล้ว</span>
+                                <% } else if (item.status===5) { %>
+                                    <span class="text-emerald-600 font-bold">รับสินค้าครบแล้ว</span>
+                                    <% } %>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 space-y-2">
+                <label class="block text-sm font-bold text-slate-700 ml-1">หมายเหตุ</label>
+                <textarea name="note" rows="2"
+                    class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"><%= item.note %></textarea>
+            </div>
+        </div>
+
+        <!-- Lines Table -->
+        <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+            <div class="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
+                <h3 class="text-xl font-bold text-slate-800">รายการสินค้า</h3>
+                <button type="button" id="addLineBtn"
+                    class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold py-2 px-4 rounded-xl transition-all flex items-center space-x-2">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>เพิ่มรายการ</span>
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left" id="linesTable">
+                    <thead class="bg-slate-50/50">
+                        <tr>
+                            <th class="px-8 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest">สินค้า</th>
+                            <th
+                                class="px-4 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest w-32 text-center">
+                                จำนวนสั่ง</th>
+                            <th
+                                class="px-4 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest w-32 text-center">
+                                ค้างรับ</th>
+                            <th class="px-4 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest w-40">ราคา
+                            </th>
+                            <th class="px-4 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest w-40">รวม
+                            </th>
+                            <th class="px-8 py-5 text-right w-20"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50">
+                        <% lines.forEach((line, index)=> { %>
+                            <tr class="group hover:bg-slate-50/50 transition-all">
+                                <td class="px-8 py-4">
+                                    <select name="lines[<%= index %>][product_id]"
+                                        class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-sm"
+                                        required>
+                                        <option value="">เลือกสินค้า...</option>
+                                        <% products.forEach(p=> { %>
+                                            <option value="<%= p.id %>" <%=p.id===line.product_id ? 'selected' : '' %>>
+                                                <%= p.code %> - <%= p.name %>
+                                            </option>
+                                            <% }) %>
+                                    </select>
+                                </td>
+                                <td class="px-4 py-4">
+                                    <input type="number" name="lines[<%= index %>][qty]" step="any"
+                                        value="<%= line.qty %>"
+                                        class="qty-input w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm text-center"
+                                        oninput="calcTotal(this)">
+                                </td>
+                                <td class="px-4 py-4 text-center font-bold text-indigo-600">
+                                    <%= line.remain_qty %>
+                                </td>
+                                <td class="px-4 py-4">
+                                    <input type="number" name="lines[<%= index %>][price]" step="any"
+                                        value="<%= line.price %>"
+                                        class="price-input w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm text-right"
+                                        oninput="calcTotal(this)">
+                                </td>
+                                <td class="px-4 py-4">
+                                    <input type="text"
+                                        class="total-display w-full px-4 py-3 bg-slate-50 border border-transparent rounded-xl text-sm text-right font-bold text-slate-700"
+                                        readonly
+                                        value="<%= (line.qty * line.price).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %>">
+                                </td>
+                                <td class="px-8 py-4 text-right">
+                                    <button type="button" onclick="this.closest('tr').remove()"
+                                        class="text-slate-300 hover:text-rose-500 transition-colors">
+                                        <i class="fa-solid fa-circle-xmark text-lg"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="flex justify-end space-x-4">
+            <a href="/pur-orders"
+                class="px-10 py-4 bg-white border border-slate-200 text-slate-500 font-bold rounded-2xl hover:bg-slate-50 transition-all active:scale-95 flex items-center">ยกเลิก</a>
+            <button type="submit"
+                class="px-10 py-4 bg-indigo-600 text-white font-bold rounded-2xl shadow-xl shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95">บันทึกการแก้ไข</button>
+        </div>
+    </form>
+
+    <template id="lineRowTemplate">
+        <tr class="group hover:bg-slate-50/50 transition-all">
+            <td class="px-8 py-4">
+                <select name="lines[{index}][product_id]"
+                    class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-sm"
+                    required>
+                    <option value="">เลือกสินค้า...</option>
+                    <% products.forEach(p=> { %>
+                        <option value="<%= p.id %>">
+                            <%= p.code %> - <%= p.name %>
+                        </option>
+                        <% }) %>
+                </select>
+            </td>
+            <td class="px-4 py-4">
+                <input type="number" name="lines[{index}][qty]" step="any" value="1"
+                    class="qty-input w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm text-center"
+                    oninput="calcTotal(this)">
+            </td>
+            <td class="px-4 py-4 text-center">-</td>
+            <td class="px-4 py-4">
+                <input type="number" name="lines[{index}][price]" step="any" value="0"
+                    class="price-input w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm text-right"
+                    oninput="calcTotal(this)">
+            </td>
+            <td class="px-4 py-4">
+                <input type="text"
+                    class="total-display w-full px-4 py-3 bg-slate-50 border border-transparent rounded-xl text-sm text-right font-bold text-slate-700"
+                    readonly value="0.00">
+            </td>
+            <td class="px-8 py-4 text-right">
+                <button type="button" onclick="this.closest('tr').remove()"
+                    class="text-slate-300 hover:text-rose-500 transition-colors">
+                    <i class="fa-solid fa-circle-xmark text-lg"></i>
+                </button>
+            </td>
+        </tr>
+    </template>
+
+    <script>
+        let lineCount = parseInt('<%= lines.length %>');
+        const template = document.getElementById('lineRowTemplate').innerHTML;
+        const tableBody = document.querySelector('#linesTable tbody');
+
+        function addLine() {
+            const row = template.replace(/{index}/g, lineCount);
+            tableBody.insertAdjacentHTML('beforeend', row);
+            lineCount++;
+        }
+
+        function calcTotal(input) {
+            const row = input.closest('tr');
+            const qty = parseFloat(row.querySelector('.qty-input').value) || 0;
+            const price = parseFloat(row.querySelector('.price-input').value) || 0;
+            const total = qty * price;
+            row.querySelector('.total-display').value = total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        document.getElementById('addLineBtn').addEventListener('click', addLine);
+    </script>
+
+    <%- include('../partials/layout_end') %>

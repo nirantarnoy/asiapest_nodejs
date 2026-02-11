@@ -1,0 +1,80 @@
+{
+  "id": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": false
+  },
+  "code": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": true
+  },
+  "name": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": true
+  },
+  "vendor_group_id": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "description": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": true
+  },
+  "payment_method_id": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "payment_term_id": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "location": {
+    "defaultValue": null,
+    "type": "varchar",
+    "maxLength": 255,
+    "nullable": true
+  },
+  "status": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "created_at": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "created_by": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "updated_at": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  },
+  "updated_by": {
+    "defaultValue": null,
+    "type": "int",
+    "maxLength": null,
+    "nullable": true
+  }
+}

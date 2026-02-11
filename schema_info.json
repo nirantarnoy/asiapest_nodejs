@@ -1,0 +1,188 @@
+{
+  "quotation_job": {
+    "id": {
+      "defaultValue": null,
+      "type": "int",
+      "maxLength": null,
+      "nullable": false
+    },
+    "quotation_id": {
+      "defaultValue": null,
+      "type": "int",
+      "maxLength": null,
+      "nullable": true
+    },
+    "title": {
+      "defaultValue": null,
+      "type": "varchar",
+      "maxLength": 255,
+      "nullable": true
+    },
+    "status": {
+      "defaultValue": null,
+      "type": "int",
+      "maxLength": null,
+      "nullable": true
+    },
+    "created_at": {
+      "defaultValue": null,
+      "type": "int",
+      "maxLength": null,
+      "nullable": true
+    },
+    "created_by": {
+      "defaultValue": null,
+      "type": "int",
+      "maxLength": null,
+      "nullable": true
+    },
+    "updated_at": {
+      "defaultValue": null,
+      "type": "int",
+      "maxLength": null,
+      "nullable": true
+    },
+    "updated_by": {
+      "defaultValue": null,
+      "type": "int",
+      "maxLength": null,
+      "nullable": true
+    },
+    "task_job_id": {
+      "defaultValue": null,
+      "type": "int",
+      "maxLength": null,
+      "nullable": true
+    },
+    "task_job_method_id": {
+      "defaultValue": null,
+      "type": "int",
+      "maxLength": null,
+      "nullable": true
+    }
+  },
+  "quotation_job_line": {
+    "id": {
+      "defaultValue": null,
+      "type": "int",
+      "maxLength": null,
+      "nullable": false
+    },
+    "quotation_job_id": {
+      "defaultValue": null,
+      "type": "int",
+      "maxLength": null,
+      "nullable": true
+    },
+    "description": {
+      "defaultValue": null,
+      "type": "varchar",
+      "maxLength": 255,
+      "nullable": true
+    },
+    "status": {
+      "defaultValue": null,
+      "type": "int",
+      "maxLength": null,
+      "nullable": true
+    },
+    "quotation_id": {
+      "defaultValue": null,
+      "type": "int",
+      "maxLength": null,
+      "nullable": true
+    },
+    "job_count": {
+      "defaultValue": null,
+      "type": "int",
+      "maxLength": null,
+      "nullable": true
+    },
+    "job_interval": {
+      "defaultValue": null,
+      "type": "int",
+      "maxLength": null,
+      "nullable": true
+    },
+    "interval_type": {
+      "defaultValue": null,
+      "type": "int",
+      "maxLength": null,
+      "nullable": true
+    }
+  },
+  "service_plan": {
+    "id": {
+      "defaultValue": null,
+      "type": "int",
+      "maxLength": null,
+      "nullable": false
+    },
+    "plan_no": {
+      "defaultValue": null,
+      "type": "varchar",
+      "maxLength": 255,
+      "nullable": true
+    },
+    "quotation_id": {
+      "defaultValue": null,
+      "type": "int",
+      "maxLength": null,
+      "nullable": true
+    },
+    "contract_id": {
+      "defaultValue": null,
+      "type": "int",
+      "maxLength": null,
+      "nullable": true
+    },
+    "quotation_job_id": {
+      "defaultValue": null,
+      "type": "int",
+      "maxLength": null,
+      "nullable": true
+    },
+    "quoation_job_line_id": {
+      "defaultValue": null,
+      "type": "int",
+      "maxLength": null,
+      "nullable": true
+    },
+    "target_date": {
+      "defaultValue": null,
+      "type": "datetime",
+      "maxLength": null,
+      "nullable": true
+    },
+    "confirm_date": {
+      "defaultValue": null,
+      "type": "datetime",
+      "maxLength": null,
+      "nullable": true
+    },
+    "status": {
+      "defaultValue": null,
+      "type": "int",
+      "maxLength": null,
+      "nullable": true
+    },
+    "note": {
+      "defaultValue": null,
+      "type": "varchar",
+      "maxLength": 255,
+      "nullable": true
+    },
+    "interval_no": {
+      "defaultValue": null,
+      "type": "int",
+      "maxLength": null,
+      "nullable": true
+    },
+    "car_id": {
+      "defaultValue": null,
+      "type": "int",
+      "maxLength": null,
+      "nullable": true
+    }
+  }
+}

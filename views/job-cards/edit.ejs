@@ -1,0 +1,171 @@
+<%- include('../partials/layout_start') %>
+
+    <form action="/job-cards/edit/<%= item.id %>" method="POST" class="max-w-6xl mx-auto pb-20">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div>
+                <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">แก้ไขใบสั่งงาน</h1>
+                <p class="text-slate-500 mt-1 font-medium">ปรับปรุงรายละเอียดการปฏิบัติงานในระบบ</p>
+            </div>
+            <div class="flex space-x-3">
+                <a href="/job-cards"
+                    class="flex items-center justify-center space-x-2 bg-white border border-slate-200 text-slate-600 px-6 py-3 rounded-2xl shadow-sm hover:bg-slate-50 transition-all font-bold">
+                    <span>ยกเลิก</span>
+                </a>
+                <button type="submit"
+                    class="flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-2xl shadow-lg shadow-emerald-200 transition-all active:scale-95 font-bold">
+                    <i class="fa-solid fa-save text-sm"></i>
+                    <span>บันทึกการแก้ไข</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-[2rem] shadow-sm border border-emerald-50 p-8 space-y-8 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">เลขที่ใบสั่งงาน</label>
+                    <input type="text" name="job_card_no" required value="<%= item.job_card_no %>"
+                        class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium">
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">อ้างอิงสัญญา</label>
+                    <select name="contract_id" required
+                        class="w-full px-5 py-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium appearance-none">
+                        <option value="">เลือกสัญญาบริการ</option>
+                        <% contracts.forEach(c=> { %>
+                            <option value="<%= c.id %>" <%=item.contract_id===c.id ? 'selected' : '' %>><%=
+                                    c.contract_no %>
+                            </option>
+                            <% }) %>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-[2rem] shadow-sm border border-emerald-50 overflow-hidden">
+            <div class="p-6 border-bottom border-emerald-50 flex justify-between items-center bg-emerald-50/30">
+                <h3 class="text-lg font-bold text-emerald-900">รายการปฏิบัติงาน</h3>
+                <button type="button" id="addLineBtn"
+                    class="flex items-center space-x-2 text-emerald-600 hover:text-emerald-700 font-bold text-sm bg-white px-4 py-2 rounded-xl border border-emerald-100 shadow-sm transition-all active:scale-95">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>เพิ่มรายการ</span>
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left" id="linesTable">
+                    <thead>
+                        <tr class="bg-emerald-50/10">
+                            <th class="px-6 py-4 text-emerald-800 font-bold text-xs uppercase tracking-wider">รอบที่
+                            </th>
+                            <th class="px-6 py-4 text-emerald-800 font-bold text-xs uppercase tracking-wider">วันที่
+                            </th>
+                            <th class="px-6 py-4 text-emerald-800 font-bold text-xs uppercase tracking-wider">
+                                พนักงานบริการ</th>
+                            <th class="px-6 py-4 text-emerald-800 font-bold text-xs uppercase tracking-wider">รายละเอียด
+                            </th>
+                            <th
+                                class="px-6 py-4 text-emerald-800 font-bold text-xs uppercase tracking-wider text-right">
+                                จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-emerald-50">
+                        <% lines.forEach((line, index)=> { %>
+                            <tr class="line-row">
+                                <td class="px-6 py-4">
+                                    <input type="number" name="lines[<%= index %>][job_count]"
+                                        value="<%= line.job_count %>"
+                                        class="w-16 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-emerald-500">
+                                </td>
+                                <td class="px-6 py-4">
+                                    <input type="date" name="lines[<%= index %>][job_date]" required
+                                        value="<%= line.job_date ? new Date(line.job_date).toISOString().split('T')[0] : '' %>"
+                                        class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-emerald-500">
+                                </td>
+                                <td class="px-6 py-4">
+                                    <select name="lines[<%= index %>][emp_service]"
+                                        class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-emerald-500">
+                                        <option value="">เลือกพนักงาน</option>
+                                        <% employees.forEach(e=> { %>
+                                            <option value="<%= e.id %>" <%=line.emp_service===e.id ? 'selected' : '' %>>
+                                                <%= e.fname %>
+                                                    <%= e.lname %>
+                                            </option>
+                                            <% }) %>
+                                    </select>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <input type="text" name="lines[<%= index %>][job_description]"
+                                        value="<%= line.job_description %>"
+                                        class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-emerald-500">
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <button type="button"
+                                        class="remove-line text-rose-400 hover:text-rose-600 transition-colors p-2">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+
+    <template id="lineRowTemplate">
+        <tr class="line-row animate-in fade-in slide-in-from-top-2 duration-300">
+            <td class="px-6 py-4">
+                <input type="number" name="lines[{index}][job_count]" value="1"
+                    class="w-16 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-emerald-500">
+            </td>
+            <td class="px-6 py-4">
+                <input type="date" name="lines[{index}][job_date]" required
+                    class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-emerald-500">
+            </td>
+            <td class="px-6 py-4">
+                <select name="lines[{index}][emp_service]"
+                    class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-emerald-500">
+                    <option value="">เลือกพนักงาน</option>
+                    <% employees.forEach(e=> { %>
+                        <option value="<%= e.id %>">
+                            <%= e.fname %>
+                                <%= e.lname %>
+                        </option>
+                        <% }) %>
+                </select>
+            </td>
+            <td class="px-6 py-4">
+                <input type="text" name="lines[{index}][job_description]" placeholder="รายละเอียดเบื้องต้น"
+                    class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-emerald-500">
+            </td>
+            <td class="px-6 py-4 text-right">
+                <button type="button" class="remove-line text-rose-400 hover:text-rose-600 transition-colors p-2">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </td>
+        </tr>
+    </template>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tableBody = document.querySelector('#linesTable tbody');
+            const addBtn = document.getElementById('addLineBtn');
+            const template = document.getElementById('lineRowTemplate').innerHTML;
+            let lineCount = parseInt('<%= lines.length %>');
+
+            const addLine = () => {
+                const rowHtml = template.replace(/{index}/g, lineCount);
+                tableBody.insertAdjacentHTML('beforeend', rowHtml);
+                lineCount++;
+            };
+
+            addBtn.addEventListener('click', addLine);
+
+            tableBody.addEventListener('click', (e) => {
+                if (e.target.closest('.remove-line')) {
+                    e.target.closest('tr').remove();
+                }
+            });
+        });
+    </script>
+
+    <%- include('../partials/layout_end') %>

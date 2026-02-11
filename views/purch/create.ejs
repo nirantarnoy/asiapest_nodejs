@@ -1,0 +1,254 @@
+<%- include('../partials/layout_start') %>
+
+    <div class="mb-8">
+        <a href="/pur-orders"
+            class="text-slate-400 hover:text-emerald-600 transition-colors flex items-center mb-4 group">
+            <i class="fa-solid fa-arrow-left mr-2 group-hover:-translate-x-1 transition-transform"></i>
+            <span class="font-bold text-sm uppercase tracking-widest">กลับไปหน้ารายการ</span>
+        </a>
+        <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">สร้างใบสั่งซื้อ (PO)</h1>
+        <p class="text-slate-500 mt-1 font-medium">ออกใบสั่งซื้อสินค้าไปยังเวนเดอร์</p>
+    </div>
+
+    <form action="/pur-orders/create" method="POST" class="space-y-8 pb-20">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Main Info -->
+            <div class="lg:col-span-2 space-y-8">
+                <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold text-slate-700 ml-1">เวนเดอร์ (Vendor)</label>
+                            <select name="vendor_id"
+                                class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all shadow-inner"
+                                required>
+                                <option value="">เลือกเวนเดอร์...</option>
+                                <% vendors.forEach(v=> { %>
+                                    <option value="<%= v.id %>">
+                                        <%= v.name %>
+                                    </option>
+                                    <% }) %>
+                            </select>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold text-slate-700 ml-1">วันที่ใบสั่งซื้อ</label>
+                            <input type="date" name="purch_date" value="<%= new Date().toISOString().split('T')[0] %>"
+                                required
+                                class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                        </div>
+                    </div>
+                    <div class="mt-8 space-y-2">
+                        <label class="block text-sm font-bold text-slate-700 ml-1">หมายเหตุ</label>
+                        <textarea name="note" rows="2"
+                            class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"></textarea>
+                    </div>
+                </div>
+
+                <!-- Lines Table -->
+                <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
+                        <h3 class="text-xl font-bold text-slate-800">รายการสินค้า</h3>
+                        <button type="button" id="addLineBtn"
+                            class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold py-2 px-4 rounded-xl transition-all flex items-center space-x-2">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>เพิ่มรายการ</span>
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left" id="linesTable">
+                            <thead class="bg-slate-50/50">
+                                <tr>
+                                    <th class="px-8 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest">
+                                        สินค้า</th>
+                                    <th
+                                        class="px-4 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest w-32">
+                                        จำนวน</th>
+                                    <th
+                                        class="px-4 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest w-40">
+                                        ราคา</th>
+                                    <th
+                                        class="px-4 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest w-40">
+                                        รวม</th>
+                                    <th class="px-8 py-5 text-right w-20"></th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-50">
+                                <!-- Lines injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: PR Selection -->
+            <div class="lg:col-span-1">
+                <div class="bg-slate-800 rounded-[2.5rem] shadow-2xl p-8 sticky top-24 text-white">
+                    <div class="flex items-center space-x-4 mb-8">
+                        <div
+                            class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-emerald-400">
+                            <i class="fa-solid fa-list-check text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold">รายการขอซื้อคงค้าง</h3>
+                            <p class="text-[10px] text-white/50 font-black uppercase tracking-widest">Select to Import
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+                        <% if (approvedPRLines.length===0) { %>
+                            <div class="text-center py-10 opacity-50">
+                                <i class="fa-solid fa-box-open text-4xl mb-4"></i>
+                                <p class="text-sm font-bold">ไม่พบรายการขอซื้อคงค้าง</p>
+                            </div>
+                            <% } %>
+                                <% approvedPRLines.forEach(line=> { %>
+                                    <div class="p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all cursor-pointer group"
+                                        onclick="importPRLine('<%= line.id %>', '<%= line.product_id %>', '<%= line.qty %>', '<%= line.price %>', '<%= line.product_code %>', '<%= line.product_name %>', '<%= line.purch_req_no %>')">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <span
+                                                class="text-[10px] font-black text-emerald-400 uppercase tracking-widest">
+                                                <%= line.purch_req_no %>
+                                            </span>
+                                            <i
+                                                class="fa-solid fa-chevron-right text-xs text-white/20 group-hover:text-white transition-all"></i>
+                                        </div>
+                                        <p class="font-bold text-sm truncate">
+                                            <%= line.product_name %>
+                                        </p>
+                                        <div class="mt-2 flex justify-between items-center text-white/50 text-[10px]">
+                                            <span>จำนวน: <b class="text-white">
+                                                    <%= line.qty %>
+                                                </b></span>
+                                            <span>ราคา: <b class="text-white">
+                                                    <%= line.price.toLocaleString() %>
+                                                </b></span>
+                                        </div>
+                                    </div>
+                                    <% }) %>
+                    </div>
+
+                    <div class="mt-10 pt-8 border-t border-white/10">
+                        <button type="submit"
+                            class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-5 rounded-[2rem] shadow-xl shadow-emerald-500/20 transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center space-x-3">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span>สร้างใบสั่งซื้อ</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <template id="lineRowTemplate">
+        <tr class="group hover:bg-slate-50/50 transition-all">
+            <td class="px-8 py-4">
+                <input type="hidden" name="lines[{index}][purch_req_id]" class="pr-id-hidden">
+                <select name="lines[{index}][product_id]"
+                    class="product-select w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-sm"
+                    required>
+                    <option value="">เลือกสินค้า...</option>
+                    <% products.forEach(p=> { %>
+                        <option value="<%= p.id %>">
+                            <%= p.code %> - <%= p.name %>
+                        </option>
+                        <% }) %>
+                </select>
+                <div class="pr-info text-[10px] text-emerald-600 font-bold mt-1 px-1"></div>
+            </td>
+            <td class="px-4 py-4">
+                <input type="number" name="lines[{index}][qty]" step="any" value="1"
+                    class="qty-input w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm text-center"
+                    oninput="calcTotal(this)">
+            </td>
+            <td class="px-4 py-4">
+                <input type="number" name="lines[{index}][price]" step="any" value="0"
+                    class="price-input w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm text-right"
+                    oninput="calcTotal(this)">
+            </td>
+            <td class="px-4 py-4 text-right">
+                <input type="text"
+                    class="total-display w-full px-4 py-3 bg-slate-50 border border-transparent rounded-xl text-sm text-right font-bold text-slate-700"
+                    readonly value="0.00">
+            </td>
+            <td class="px-8 py-4 text-right text-slate-300 hover:text-rose-500 transition-colors pointer-events-auto">
+                <button type="button" onclick="this.closest('tr').remove()" class="remove-btn"><i
+                        class="fa-solid fa-circle-xmark text-lg"></i></button>
+            </td>
+        </tr>
+    </template>
+
+    <script>
+        let lineCount = 0;
+        const template = document.getElementById('lineRowTemplate').innerHTML;
+        const tableBody = document.querySelector('#linesTable tbody');
+
+        function addLine() {
+            const row = template.replace(/{index}/g, lineCount);
+            tableBody.insertAdjacentHTML('beforeend', row);
+            lineCount++;
+            return tableBody.lastElementChild;
+        }
+
+        function calcTotal(input) {
+            const row = input.closest('tr');
+            const qty = parseFloat(row.querySelector('.qty-input').value) || 0;
+            const price = parseFloat(row.querySelector('.price-input').value) || 0;
+            const total = qty * price;
+            row.querySelector('.total-display').value = total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function importPRLine(prLineId, productId, qty, price, code, name, prNo) {
+            const row = addLine();
+            const select = row.querySelector('.product-select');
+            select.value = productId;
+            row.querySelector('.qty-input').value = qty;
+            row.querySelector('.price-input').value = price;
+            row.querySelector('.pr-id-hidden').value = prLineId;
+            row.querySelector('.pr-info').innerText = 'Convert from ' + prNo;
+            calcTotal(row.querySelector('.qty-input'));
+
+            // Add hidden input for tracking which PR line is converted
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = 'pr_line_ids[]';
+            hidden.value = prLineId;
+            document.querySelector('form').appendChild(hidden);
+        }
+
+        document.getElementById('addLineBtn').addEventListener('click', () => addLine());
+
+        // Handle auto-import of PR lines if provided
+        const autoImportLines = <% - JSON.stringify(autoImportLines) %>;
+        if (autoImportLines && autoImportLines.length > 0) {
+            // Remove initial empty line
+            tableBody.innerHTML = '';
+
+            autoImportLines.forEach(line => {
+                importPRLine(line.id, line.product_id, line.qty, line.price, line.product_code, line.product_name, line.purch_req_no);
+            });
+        } else {
+            // Initial line if empty
+            if (lineCount === 0) addLine();
+        }
+    </script>
+
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+
+    <%- include('../partials/layout_end') %>

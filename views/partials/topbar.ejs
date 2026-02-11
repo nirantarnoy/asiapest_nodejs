@@ -1,0 +1,54 @@
+<nav
+    class="glass sticky top-0 z-50 px-6 py-4 flex justify-between items-center shadow-sm border-b border-emerald-100 ml-0 lg:ml-64 transition-all duration-300">
+    <div class="flex items-center space-x-4">
+        <button id="sidebarToggle" class="lg:hidden text-slate-600 hover:text-emerald-600">
+            <i class="fa-solid fa-bars text-xl"></i>
+        </button>
+        <% let pageTitle='Dashboard' ; const pathMapper={ '/quotations' : 'ใบเสนอราคา' , '/contracts' : 'สัญญาบริการ'
+            , '/service-plans' : 'แผนบริการ' , '/job-cards' : 'ใบสั่งงาน (Job Card)' , '/customers' : 'ลูกค้า'
+            , '/customer-groups' : 'กลุ่มลูกค้า' , '/customer-types' : 'ประเภทลูกค้า' , '/products' : 'สินค้า'
+            , '/product-types' : 'ประเภทสินค้า' , '/product-groups' : 'กลุ่มสินค้า' , '/employees' : 'พนักงาน'
+            , '/positions' : 'ตำแหน่ง' , '/company' : 'ข้อมูลบริษัท' , '/estimate-price' : 'ประมาณการราคา'
+            , '/import-master' : 'นำเข้าข้อมูลมาสเตอร์' , '/dashboard' : 'ภาพรวมระบบ' , '/warehouses' : 'คลังสินค้า'
+            , '/locations' : 'ตำแหน่งจัดเก็บ' , '/stock-trans' : 'ประวัติสต๊อก' , '/stock-sum' : 'สินค้าคงเหลือ'
+            , '/stock-count' : 'นับสต๊อก' , '/pay-methods' : 'วิธีชำระเงิน' , '/pay-terms' : 'เงื่อนไขชำระเงิน'
+            , '/tasks' : 'ขั้นตอนงาน' , '/service-types' : 'ประเภทบริการ' , '/std-prices' : 'ราคามาตรฐาน' , '/car-types'
+            : 'ประเภทรถ' , '/cars' : 'ข้อมูลรถ' , '/user-groups' : 'กลุ่มผู้ใช้งาน' , '/users' : 'ผู้ใช้งาน'
+            , '/permissions' : 'สิทธิ์การใช้งาน' , '/backup' : 'สำรองข้อมูล' }; for (const [route, title] of
+            Object.entries(pathMapper)) { if (currentPath.startsWith(route)) { pageTitle=title; break; } } %>
+            <h2 class="text-xl font-bold text-emerald-800 hidden sm:block">
+                <%= pageTitle %>
+            </h2>
+    </div>
+
+    <div class="flex items-center space-x-6">
+        <div class="text-right hidden sm:block">
+            <p class="text-sm font-bold text-slate-800">
+                <%= user ? user.username : 'Guest' %>
+            </p>
+            <div class="flex items-center justify-end">
+                <span class="w-2 h-2 bg-emerald-500 rounded-full mr-2"></span>
+                <p class="text-xs text-emerald-600 font-medium uppercase tracking-wider">Online</p>
+            </div>
+        </div>
+        <div class="relative group">
+            <button
+                class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 border border-emerald-200 hover:bg-emerald-200 transition-colors">
+                <i class="fa-solid fa-user"></i>
+            </button>
+            <div class="absolute right-0 top-full pt-2 w-48 hidden group-hover:block">
+                <div
+                    class="bg-white rounded-2xl shadow-xl border border-slate-100 py-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <a href="/profile"
+                        class="block px-4 py-2 text-sm text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors">
+                        <i class="fa-solid fa-id-card mr-2 scale-90"></i>Profile
+                    </a>
+                    <div class="h-px bg-slate-100 my-1"></div>
+                    <a href="/logout" class="block px-4 py-2 text-sm text-rose-600 hover:bg-rose-50 transition-colors">
+                        <i class="fa-solid fa-power-off mr-2 scale-90"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>

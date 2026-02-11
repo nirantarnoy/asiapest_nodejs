@@ -1,0 +1,63 @@
+<%- include('../partials/layout_start') %>
+
+    <div class="mb-8">
+        <a href="/vendors" class="text-slate-400 hover:text-indigo-600 transition-colors flex items-center mb-4 group">
+            <i class="fa-solid fa-arrow-left mr-2 group-hover:-translate-x-1 transition-transform"></i>
+            <span class="font-bold text-sm uppercase tracking-widest">กลับไปหน้ารายการ</span>
+        </a>
+        <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">แก้ไขข้อมูลผู้ขาย</h1>
+        <p class="text-slate-500 mt-1 font-medium">แก้ไขรายละเอียดของ <%= item.name %>
+        </p>
+    </div>
+
+    <form action="/vendors/edit/<%= item.id %>" method="POST" class="max-w-4xl">
+        <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-8 md:p-12 space-y-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">ชื่อผู้ขาย <span
+                            class="text-rose-500">*</span></label>
+                    <input type="text" name="name" value="<%= item.name %>" required
+                        class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all shadow-inner">
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">เลขประจำตัวผู้เสียภาษี</label>
+                    <input type="text" name="tax_id" value="<%= item.tax_id %>"
+                        class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all shadow-inner">
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-sm font-bold text-slate-700 ml-1">ที่อยู่</label>
+                <textarea name="address" rows="3"
+                    class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all shadow-inner"><%= item.address %></textarea>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">ชื่อผู้ติดต่อ</label>
+                    <input type="text" name="contact_name" value="<%= item.contact_name %>"
+                        class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all shadow-inner">
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">เบอร์โทรศัพท์</label>
+                    <input type="text" name="phone" value="<%= item.phone %>"
+                        class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all shadow-inner">
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700 ml-1">อีเมล</label>
+                    <input type="email" name="email" value="<%= item.email %>"
+                        class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all shadow-inner">
+                </div>
+            </div>
+
+            <div class="pt-6 border-t border-slate-50 flex justify-end">
+                <button type="submit"
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-10 rounded-2xl shadow-xl shadow-indigo-100 transition-all active:scale-95 flex items-center space-x-2">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    <span>บันทึกการแก้ไข</span>
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <%- include('../partials/layout_end') %>

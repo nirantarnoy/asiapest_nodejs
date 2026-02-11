@@ -1,0 +1,194 @@
+<%- include('../partials/layout_start') %>
+
+    <div class="mb-8">
+        <div class="flex items-center gap-3 mb-4">
+            <a href="/stock-count"
+                class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-purple-50 hover:border-purple-200 hover:text-purple-600 transition-all">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+            <div>
+                <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">รายละเอียดการนับสต๊อก</h1>
+                <p class="text-slate-500 mt-1 font-medium">เลขที่เอกสาร: <%= count.journal_no %>
+                </p>
+            </div>
+        </div>
+
+        <!-- Header Card -->
+        <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-[2rem] p-8 text-white shadow-lg mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <div class="text-purple-100 text-sm font-medium mb-1">เลขที่เอกสาร</div>
+                    <div class="text-2xl font-bold">
+                        <%= count.journal_no || '-' %>
+                    </div>
+                </div>
+                <div>
+                    <div class="text-purple-100 text-sm font-medium mb-1">วันที่นับสต๊อก</div>
+                    <div class="text-xl font-semibold">
+                        <%= count.trans_date ? new Date(count.trans_date).toLocaleDateString('th-TH', { year: 'numeric'
+                            , month: 'long' , day: 'numeric' }) : '-' %>
+                    </div>
+                </div>
+                <div>
+                    <div class="text-purple-100 text-sm font-medium mb-1">สถานะ</div>
+                    <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-xl">
+                        <% if (count.status===1) { %>
+                            <i class="fa-solid fa-check-circle text-green-300"></i>
+                            <span class="font-bold">เสร็จสิ้น</span>
+                            <% } else if (count.status===0) { %>
+                                <i class="fa-solid fa-clock text-yellow-300"></i>
+                                <span class="font-bold">รอดำเนินการ</span>
+                                <% } else { %>
+                                    <span class="font-bold">ไม่ระบุ</span>
+                                    <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Items Table -->
+    <form action="/stock-count/view/<%= count.id %>" method="POST">
+        <div class="bg-white rounded-[2rem] shadow-sm border border-purple-50 overflow-hidden">
+            <div class="p-6 border-b border-purple-50 bg-purple-50/30 flex justify-between items-center">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">รายการสินค้า</h2>
+                    <p class="text-slate-500 text-sm mt-1">รายการสินค้าที่ทำการนับสต๊อก</p>
+                </div>
+                <button type="button" onclick="addLine()"
+                    class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-xl transition-all flex items-center space-x-2">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>เพิ่มรายการสินค้า</span>
+                </button>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse" id="linesTable">
+                    <thead>
+                        <tr class="bg-purple-50/50">
+                            <th class="px-6 py-4 text-purple-800 font-bold text-sm uppercase tracking-wider">สินค้า</th>
+                            <th
+                                class="px-6 py-4 text-purple-800 font-bold text-sm uppercase tracking-wider text-right w-32">
+                                จำนวนในระบบ</th>
+                            <th
+                                class="px-6 py-4 text-purple-800 font-bold text-sm uppercase tracking-wider text-right w-32">
+                                จำนวนนับได้</th>
+                            <th
+                                class="px-6 py-4 text-purple-800 font-bold text-sm uppercase tracking-wider text-right w-32">
+                                ส่วนต่าง</th>
+                            <th class="px-6 py-4 text-right w-20"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-purple-50">
+                        <% lines.forEach((line, index)=> { %>
+                            <tr class="hover:bg-purple-50/30 transition-colors">
+                                <td class="px-6 py-4">
+                                    <select name="lines[<%= index %>][product_id]"
+                                        class="w-full px-3 py-2 bg-slate-50 border border-slate-100 rounded-lg text-sm"
+                                        required>
+                                        <option value="">เลือกสินค้า...</option>
+                                        <% products.forEach(p=> { %>
+                                            <option value="<%= p.id %>" <%=line.product_id==p.id ? 'selected' : '' %>>
+                                                <%= p.code %> - <%= p.name %>
+                                            </option>
+                                            <% }) %>
+                                    </select>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <input type="number" step="any" name="lines[<%= index %>][qty]"
+                                        value="<%= line.qty %>"
+                                        class="w-full px-3 py-2 bg-slate-50 border border-slate-100 rounded-lg text-sm text-right"
+                                        required>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <input type="number" step="any" name="lines[<%= index %>][counted]"
+                                        value="<%= line.counted %>" oninput="updateDiff(this)"
+                                        class="w-full px-3 py-2 bg-white border border-purple-200 rounded-lg text-sm text-right font-bold text-blue-600 focus:ring-2 focus:ring-purple-500 outline-none"
+                                        required>
+                                </td>
+                                <td
+                                    class="px-6 py-4 text-right font-bold text-lg diff-cell <%= (line.diff_qty || 0) >= 0 ? 'text-green-600' : 'text-red-600' %>">
+                                    <%= (line.diff_qty || 0).toLocaleString('th-TH', { minimumFractionDigits: 2 }) %>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <button type="button" onclick="this.closest('tr').remove()"
+                                        class="text-slate-300 hover:text-rose-500">
+                                        <i class="fa-solid fa-circle-xmark text-lg"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="p-8 border-t border-purple-50 bg-slate-50 flex justify-end">
+                <button type="submit"
+                    class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-10 rounded-2xl shadow-xl shadow-purple-100 transition-all hover:scale-105 active:scale-95 flex items-center space-x-2">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    <span>บันทึกความเปลี่ยนแปลง</span>
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <template id="lineTemplate">
+        <tr class="hover:bg-purple-50/30 transition-colors">
+            <td class="px-6 py-4">
+                <select name="lines[{index}][product_id]"
+                    class="w-full px-3 py-2 bg-slate-50 border border-slate-100 rounded-lg text-sm" required>
+                    <option value="">เลือกสินค้า...</option>
+                    <% products.forEach(p=> { %>
+                        <option value="<%= p.id %>">
+                            <%= p.code %> - <%= p.name %>
+                        </option>
+                        <% }) %>
+                </select>
+            </td>
+            <td class="px-6 py-4">
+                <input type="number" step="any" name="lines[{index}][qty]" value="0"
+                    class="w-full px-3 py-2 bg-slate-50 border border-slate-100 rounded-lg text-sm text-right" required>
+            </td>
+            <td class="px-6 py-4">
+                <input type="number" step="any" name="lines[{index}][counted]" value="0" oninput="updateDiff(this)"
+                    class="w-full px-3 py-2 bg-white border border-purple-200 rounded-lg text-sm text-right font-bold text-blue-600 focus:ring-2 focus:ring-purple-500 outline-none"
+                    required>
+            </td>
+            <td class="px-6 py-4 text-right font-bold text-lg diff-cell text-slate-400">0.00</td>
+            <td class="px-6 py-4 text-right">
+                <button type="button" onclick="this.closest('tr').remove()" class="text-slate-300 hover:text-rose-500">
+                    <i class="fa-solid fa-circle-xmark text-lg"></i>
+                </button>
+            </td>
+        </tr>
+    </template>
+
+    <script>
+        let lineIndex = <%= lines.length %>;
+
+        function addLine() {
+            const template = document.getElementById('lineTemplate').innerHTML;
+            const html = template.replace(/{index}/g, lineIndex);
+            document.querySelector('#linesTable tbody').insertAdjacentHTML('beforeend', html);
+            lineIndex++;
+        }
+
+        function updateDiff(input) {
+            const row = input.closest('tr');
+            const qty = parseFloat(row.querySelector('input[name*="[qty]"]').value) || 0;
+            const counted = parseFloat(input.value) || 0;
+            const diff = counted - qty;
+            const diffCell = row.querySelector('.diff-cell');
+
+            diffCell.innerText = diff.toLocaleString('th-TH', { minimumFractionDigits: 2 });
+            if (diff > 0) {
+                diffCell.className = 'px-6 py-4 text-right font-bold text-lg diff-cell text-green-600';
+            } else if (diff < 0) {
+                diffCell.className = 'px-6 py-4 text-right font-bold text-lg diff-cell text-red-600';
+            } else {
+                diffCell.className = 'px-6 py-4 text-right font-bold text-lg diff-cell text-slate-400';
+            }
+        }
+    </script>
+
+    <%- include('../partials/layout_end') %>
