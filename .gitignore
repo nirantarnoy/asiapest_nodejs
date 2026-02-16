@@ -11,8 +11,9 @@ public/uploads/
 # For now, just ignore the folder content or the folder itself if it's purely generated.
 
 # Logs
-logs/
+/logs/
 *.log
+!views/logs/
 npm-debug.log*
 
 # OS files

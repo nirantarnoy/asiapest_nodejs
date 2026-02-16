@@ -1,0 +1,72 @@
+<%- include('../partials/layout_start') %>
+
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+            <h2 class="text-3xl font-bold text-slate-800">Log การเข้าใช้งาน (Access Log)</h2>
+            <p class="text-emerald-600/60 font-medium">บันทึกประวัติการเข้าถึงระบบและการเรียกใช้งาน URL ต่างๆ</p>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50/50 border-b border-slate-100">
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">วัน-เวลา</th>
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">ผู้ใช้งาน</th>
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Method & URL
+                        </th>
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">IP Address</th>
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">User Agent</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    <% logs.forEach(log=> { %>
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="px-6 py-4 text-sm text-slate-600">
+                                <%= new Date(log.created_at).toLocaleString('th-TH') %>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center">
+                                    <span class="font-bold text-slate-800">
+                                        <%= log.username || 'Guest' %>
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold rounded mr-2">
+                                    <%= log.method %>
+                                </span>
+                                <span class="text-sm text-slate-500 font-mono">
+                                    <%= log.url %>
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-slate-500">
+                                <%= log.ip_address %>
+                            </td>
+                            <td class="px-6 py-4 text-[10px] text-slate-400 max-w-xs truncate"
+                                title="<%= log.user_agent %>">
+                                <%= log.user_agent %>
+                            </td>
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="p-6 border-t border-slate-100 flex items-center justify-between">
+            <p class="text-sm text-slate-500">ทั้งหมด <%= totalItems %> รายการ</p>
+            <div class="flex space-x-2">
+                <% if (currentPage> 1) { %>
+                    <a href="/logs/access?page=<%= currentPage - 1 %>"
+                        class="px-4 py-2 border rounded-xl hover:bg-slate-50 transition-colors text-sm font-medium">ก่อนหน้า</a>
+                    <% } %>
+                        <% if (currentPage < totalPages) { %>
+                            <a href="/logs/access?page=<%= currentPage + 1 %>"
+                                class="px-4 py-2 border rounded-xl hover:bg-slate-50 transition-colors text-sm font-medium">ถัดไป</a>
+                            <% } %>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/layout_end') %>

@@ -1,0 +1,93 @@
+<%- include('../partials/layout_start') %>
+
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+            <h2 class="text-3xl font-bold text-slate-800">Log กิจกรรม (Action Log)</h2>
+            <p class="text-emerald-600/60 font-medium">บันทึกการเปลี่ยนแปลงข้อมูลหลักในระบบ (Create, Update, Delete)</p>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50/50 border-b border-slate-100">
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">วัน-เวลา</th>
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">ผู้ใช้งาน</th>
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Action & Table
+                        </th>
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">รายละเอียด
+                            (Before/After)</th>
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">IP
+                            Address</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    <% logs.forEach(log=> { %>
+                        <tr class="hover:bg-slate-50 transition-colors align-top">
+                            <td class="px-6 py-4 text-sm text-slate-600 whitespace-nowrap">
+                                <%= new Date(log.created_at).toLocaleString('th-TH') %>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="font-bold text-slate-800">
+                                    <%= log.username || 'System' %>
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <% let badgeClass='bg-slate-100 text-slate-600' ; if(log.action==='CREATE' )
+                                    badgeClass='bg-emerald-100 text-emerald-700' ; if(log.action==='UPDATE' )
+                                    badgeClass='bg-blue-100 text-blue-700' ; if(log.action==='DELETE' )
+                                    badgeClass='bg-rose-100 text-rose-700' ; %>
+                                    <span class="px-2 py-1 <%= badgeClass %> text-[10px] font-bold rounded mr-2">
+                                        <%= log.action %>
+                                    </span>
+                                    <span class="text-sm font-bold text-slate-600">
+                                        <%= log.table_name %>
+                                    </span>
+                                    <p class="text-[10px] text-slate-400 mt-1">ID: <%= log.row_id %>
+                                    </p>
+                            </td>
+                            <td class="px-6 py-4 max-w-lg">
+                                <div class="space-y-2">
+                                    <% if(log.data_before) { %>
+                                        <div class="p-2 bg-rose-50/50 rounded-lg border border-rose-100">
+                                            <p class="text-[9px] font-bold text-rose-600 uppercase mb-1">Before:</p>
+                                            <code
+                                                class="text-[10px] text-rose-800 break-all"><%= log.data_before %></code>
+                                        </div>
+                                        <% } %>
+                                            <% if(log.data_after) { %>
+                                                <div class="p-2 bg-emerald-50/50 rounded-lg border border-emerald-100">
+                                                    <p class="text-[9px] font-bold text-emerald-600 uppercase mb-1">
+                                                        After:</p>
+                                                    <code
+                                                        class="text-[10px] text-emerald-800 break-all"><%= log.data_after %></code>
+                                                </div>
+                                                <% } %>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-slate-500 text-right">
+                                <%= log.ip_address %>
+                            </td>
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="p-6 border-t border-slate-100 flex items-center justify-between">
+            <p class="text-sm text-slate-500">ทั้งหมด <%= totalItems %> รายการ</p>
+            <div class="flex space-x-2">
+                <% if (currentPage> 1) { %>
+                    <a href="/logs/action?page=<%= currentPage - 1 %>"
+                        class="px-4 py-2 border rounded-xl hover:bg-slate-50 transition-colors text-sm font-medium">ก่อนหน้า</a>
+                    <% } %>
+                        <% if (currentPage < totalPages) { %>
+                            <a href="/logs/action?page=<%= currentPage + 1 %>"
+                                class="px-4 py-2 border rounded-xl hover:bg-slate-50 transition-colors text-sm font-medium">ถัดไป</a>
+                            <% } %>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/layout_end') %>
