@@ -10,6 +10,7 @@ const isAuthenticated = (req, res, next) => {
 router.get('/', isAuthenticated, journalIssueController.index);
 router.get('/create', isAuthenticated, journalIssueController.create);
 router.post('/create', isAuthenticated, journalIssueController.store);
+router.get('/api/warehouse-stock/:warehouse_id', isAuthenticated, journalIssueController.getWarehouseStock);
 router.get('/delete/:id', isAuthenticated, journalIssueController.delete);
 router.get('/print/:id', isAuthenticated, journalIssueController.print);
 

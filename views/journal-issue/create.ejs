@@ -36,11 +36,18 @@
         <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
             <div class="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
                 <h3 class="text-xl font-bold text-slate-800">รายการสินค้าที่เบิก</h3>
-                <button type="button" id="addLineBtn"
-                    class="bg-amber-50 text-amber-700 hover:bg-amber-100 font-bold py-2 px-4 rounded-xl transition-all flex items-center space-x-2">
-                    <i class="fa-solid fa-plus"></i>
-                    <span>เพิ่มรายการ</span>
-                </button>
+                <div class="flex space-x-2">
+                    <button type="button" onclick="openProductPicker()"
+                        class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold py-2 px-4 rounded-xl transition-all flex items-center space-x-2">
+                        <i class="fa-solid fa-boxes-stacked"></i>
+                        <span>เลือกสินค้าจากคลัง</span>
+                    </button>
+                    <button type="button" id="addLineBtn"
+                        class="bg-amber-50 text-amber-700 hover:bg-amber-100 font-bold py-2 px-4 rounded-xl transition-all flex items-center space-x-2">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>เพิ่มรายการ</span>
+                    </button>
+                </div>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left" id="linesTable">
@@ -72,16 +79,23 @@
     <template id="lineRowTemplate">
         <tr class="group hover:bg-slate-50/50 transition-all">
             <td class="px-8 py-4">
-                <select name="lines[{index}][product_id]"
-                    class="product-select w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all text-sm"
-                    required>
-                    <option value="">เลือกสินค้า...</option>
-                    <% products.forEach(p=> { %>
-                        <option value="<%= p.id %>">
-                            <%= p.code %> - <%= p.name %>
-                        </option>
-                        <% }) %>
-                </select>
+                <div class="flex items-center space-x-2">
+                    <select name="lines[{index}][product_id]"
+                        class="product-select w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all text-sm"
+                        required>
+                        <option value="">เลือกสินค้า...</option>
+                        <% products.forEach(p=> { %>
+                            <option value="<%= p.id %>">
+                                <%= p.code %> - <%= p.name %>
+                            </option>
+                            <% }) %>
+                    </select>
+                    <button type="button" onclick="openProductPicker(this.closest('tr'))"
+                        class="p-3 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-xl transition-all"
+                        title="เลือกจากคลัง">
+                        <i class="fa-solid fa-boxes-stacked"></i>
+                    </button>
+                </div>
             </td>
             <td class="px-4 py-4">
                 <input type="number" name="lines[{index}][qty]" step="any" value="1"
@@ -97,6 +111,64 @@
         </tr>
     </template>
 
+    <!-- Modal -->
+    <div id="productModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity bg-slate-900/60 backdrop-blur-sm"
+                onclick="closeProductModal()"></div>
+            <div
+                class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-[2.5rem] shadow-2xl sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
+                <div class="px-8 py-6 bg-slate-50/50 border-b border-slate-100 flex justify-between items-center">
+                    <h3 class="text-xl font-bold text-slate-800">เลือกสินค้าจากคลัง</h3>
+                    <button type="button" onclick="closeProductModal()" class="text-slate-400 hover:text-slate-600">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+                <div class="p-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">เลือกคลังสินค้า</label>
+                            <select id="modalWarehouseSelect" onchange="loadWarehouseStock()"
+                                class="w-full px-5 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                <option value="">เลือกคลัง...</option>
+                                <% warehouses.forEach(w=> { %>
+                                    <option value="<%= w.id %>">
+                                        <%= w.name %>
+                                    </option>
+                                    <% }) %>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">ค้นหาสินค้า</label>
+                            <input type="text" id="modalSearchInput" onkeyup="filterModalProducts()"
+                                placeholder="พิมพ์ชื่อหรือรหัสสินค้า..."
+                                class="w-full px-5 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto max-h-96 border border-slate-100 rounded-2xl">
+                        <table class="w-full text-left" id="modalProductTable">
+                            <thead class="bg-slate-50 sticky top-0">
+                                <tr>
+                                    <th class="px-6 py-4 text-slate-500 font-bold text-xs uppercase tracking-widest">
+                                        รหัสสินค้า</th>
+                                    <th class="px-6 py-4 text-slate-500 font-bold text-xs uppercase tracking-widest">
+                                        ชื่อสินค้า</th>
+                                    <th
+                                        class="px-6 py-4 text-slate-500 font-bold text-xs uppercase tracking-widest text-center">
+                                        ยอดคงเหลือ</th>
+                                    <th class="px-6 py-4 text-right"></th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-50">
+                                <!-- Items loaded via AJAX -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         let lineCount = 0;
         const template = document.getElementById('lineRowTemplate').innerHTML;
@@ -109,6 +181,111 @@
         }
 
         document.getElementById('addLineBtn').addEventListener('click', () => addLine());
+
+        // Modal Logic
+        let currentTargetRow = null;
+
+        function openProductPicker(row = null) {
+            currentTargetRow = row;
+            document.getElementById('productModal').classList.remove('hidden');
+            // Auto load if a warehouse is selected
+            const select = document.getElementById('modalWarehouseSelect');
+            if (select.value) {
+                loadWarehouseStock();
+            } else if (select.options.length === 2) { // [0] is placeholder, [1] is first warehouse
+                select.selectedIndex = 1;
+                loadWarehouseStock();
+            }
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').classList.add('hidden');
+        }
+
+        async function loadWarehouseStock() {
+            const warehouseId = document.getElementById('modalWarehouseSelect').value;
+            const tbody = document.querySelector('#modalProductTable tbody');
+            tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-10 text-center text-slate-400">กำลังโหลด...</td></tr>';
+
+            if (!warehouseId) {
+                tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-10 text-center text-slate-400">กรุณาเลือกคลังสินค้า</td></tr>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/journal-issue/api/warehouse-stock/${warehouseId}`);
+                const stocks = await response.json();
+
+                if (stocks.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-10 text-center text-slate-400">ไม่พบสินค้าในคลังนี้</td></tr>';
+                    modalStockData = [];
+                    return;
+                }
+
+                renderModalProducts(stocks);
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-10 text-center text-rose-500">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>';
+            }
+        }
+
+        let modalStockData = [];
+        function renderModalProducts(stocks) {
+            modalStockData = stocks;
+            filterModalProducts();
+        }
+
+        function filterModalProducts() {
+            const search = document.getElementById('modalSearchInput').value.toLowerCase();
+            const tbody = document.querySelector('#modalProductTable tbody');
+            const filtered = modalStockData.filter(s =>
+                (s.code && s.code.toLowerCase().includes(search)) ||
+                (s.name && s.name.toLowerCase().includes(search))
+            );
+
+            tbody.innerHTML = filtered.map(s => `
+                <tr class="hover:bg-slate-50 transition-all">
+                    <td class="px-6 py-4 font-medium text-slate-700">${s.code || ''}</td>
+                    <td class="px-6 py-4 text-slate-600">${s.name || ''}</td>
+                    <td class="px-6 py-4 text-center font-bold text-amber-600">${s.qty}</td>
+                    <td class="px-6 py-4 text-right">
+                        <button type="button" onclick="selectProductFromModal(${s.id}, '${s.code || ''}', '${s.name || ''}')" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-xl text-sm transition-all shadow-lg shadow-amber-500/20">
+                            เลือก
+                        </button>
+                    </td>
+                </tr>
+            `).join('') || '<tr><td colspan="4" class="px-6 py-10 text-center text-slate-400">ไม่พบสินค้าที่ค้นหา</td></tr>';
+        }
+
+        function selectProductFromModal(id, code, name) {
+            if (currentTargetRow) {
+                // Update specific row
+                const select = currentTargetRow.querySelector('.product-select');
+                select.value = id;
+                closeProductModal();
+            } else {
+                // Add new row or fill last empty row
+                const currentRows = tableBody.querySelectorAll('tr');
+                let targetRow = null;
+
+                // Find if the last row is empty
+                if (currentRows.length > 0) {
+                    const lastRow = currentRows[currentRows.length - 1];
+                    const select = lastRow.querySelector('.product-select');
+                    if (!select.value) {
+                        targetRow = lastRow;
+                    }
+                }
+
+                if (!targetRow) {
+                    addLine();
+                    const newRows = tableBody.querySelectorAll('tr');
+                    targetRow = newRows[newRows.length - 1];
+                }
+
+                targetRow.querySelector('.product-select').value = id;
+                closeProductModal();
+            }
+        }
 
         // Initial line
         addLine();
