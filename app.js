@@ -75,6 +75,7 @@ const workTaskRoutes = require('./routes/workTaskRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
 const complainRoutes = require('./routes/complainRoutes');
 const logRoutes = require('./routes/logRoutes');
+const rbacRoutes = require('./routes/rbacRoutes');
 
 // Initialize Services
 require('./services/BackupService');
@@ -122,6 +123,7 @@ app.use('/work-tasks', workTaskRoutes);
 app.use('/service', serviceRoutes);
 app.use('/complain', complainRoutes);
 app.use('/logs', logRoutes);
+app.use('/rbac', rbacRoutes);
 
 // Home Redirect
 app.get('/', (req, res) => {

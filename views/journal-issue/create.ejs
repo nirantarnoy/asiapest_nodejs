@@ -55,6 +55,9 @@
                         <tr>
                             <th class="px-8 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest">สินค้า</th>
                             <th
+                                class="px-4 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest text-center">
+                                ยอดคงเหลือ</th>
+                            <th
                                 class="px-4 py-5 text-slate-400 font-bold text-xs uppercase tracking-widest w-48 text-center">
                                 จำนวนที่เบิก</th>
                             <th class="px-8 py-5 text-right w-20"></th>
@@ -97,10 +100,16 @@
                     </button>
                 </div>
             </td>
+            <td class="px-4 py-4 text-center">
+                <span class="stock-display font-bold text-slate-400">-</span>
+                <input type="hidden" name="lines[{index}][available_stock]" class="stock-input" value="0">
+            </td>
             <td class="px-4 py-4">
                 <input type="number" name="lines[{index}][qty]" step="any" value="1"
-                    class="qty-input w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm text-center"
-                    required>
+                    class="qty-input w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm text-center focus:ring-2 focus:ring-amber-500 transition-all"
+                    oninput="validateQty(this)" required>
+                <div class="qty-warning hidden text-[10px] text-rose-500 font-bold mt-1 text-center">เกินยอดคงเหลือ!
+                </div>
             </td>
             <td class="px-8 py-4 text-right">
                 <button type="button" onclick="this.closest('tr').remove()"
@@ -256,11 +265,17 @@
             `).join('') || '<tr><td colspan="4" class="px-6 py-10 text-center text-slate-400">ไม่พบสินค้าที่ค้นหา</td></tr>';
         }
 
-        function selectProductFromModal(id, code, name) {
+        function selectProductFromModal(id, code, name, qty) {
             if (currentTargetRow) {
                 // Update specific row
                 const select = currentTargetRow.querySelector('.product-select');
                 select.value = id;
+                const stockDisplay = currentTargetRow.querySelector('.stock-display');
+                const stockInput = currentTargetRow.querySelector('.stock-input');
+                stockDisplay.textContent = qty;
+                stockDisplay.className = 'stock-display font-bold text-amber-600';
+                stockInput.value = qty;
+                validateQty(currentTargetRow.querySelector('.qty-input'));
                 closeProductModal();
             } else {
                 // Add new row or fill last empty row
@@ -283,8 +298,74 @@
                 }
 
                 targetRow.querySelector('.product-select').value = id;
+                const stockDisplay = targetRow.querySelector('.stock-display');
+                const stockInput = targetRow.querySelector('.stock-input');
+                stockDisplay.textContent = qty;
+                stockDisplay.className = 'stock-display font-bold text-amber-600';
+                stockInput.value = qty;
+                validateQty(targetRow.querySelector('.qty-input'));
                 closeProductModal();
             }
+        }
+
+        function validateQty(input) {
+            const row = input.closest('tr');
+            const qty = parseFloat(input.value) || 0;
+            const stock = parseFloat(row.querySelector('.stock-input').value) || 0;
+            const warning = row.querySelector('.qty-warning');
+
+            if (qty > stock) {
+                input.classList.add('border-rose-500', 'text-rose-600', 'bg-rose-50');
+                warning.classList.remove('hidden');
+            } else {
+                input.classList.remove('border-rose-500', 'text-rose-600', 'bg-rose-50');
+                warning.classList.add('hidden');
+            }
+
+            // Re-check all rows to enable/disable submit
+            checkAllRows();
+        }
+
+        function checkAllRows() {
+            let hasError = false;
+            document.querySelectorAll('.qty-input').forEach(input => {
+                const row = input.closest('tr');
+                const qty = parseFloat(input.value) || 0;
+                const stock = parseFloat(row.querySelector('.stock-input').value) || 0;
+                if (qty > stock) hasError = true;
+            });
+
+            const submitBtn = document.querySelector('button[type="submit"]');
+            if (hasError) {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        // Update handle modal item selection function to pass qty
+        function filterModalProducts() {
+            const search = document.getElementById('modalSearchInput').value.toLowerCase();
+            const tbody = document.querySelector('#modalProductTable tbody');
+            const filtered = modalStockData.filter(s =>
+                (s.code && s.code.toLowerCase().includes(search)) ||
+                (s.name && s.name.toLowerCase().includes(search))
+            );
+
+            tbody.innerHTML = filtered.map(s => `
+                <tr class="hover:bg-slate-50 transition-all">
+                    <td class="px-6 py-4 font-medium text-slate-700">${s.code || ''}</td>
+                    <td class="px-6 py-4 text-slate-600">${s.name || ''}</td>
+                    <td class="px-6 py-4 text-center font-bold text-amber-600">${s.qty}</td>
+                    <td class="px-6 py-4 text-right">
+                        <button type="button" onclick="selectProductFromModal(${s.id}, '${s.code || ''}', '${s.name || ''}', ${s.qty})" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-xl text-sm transition-all shadow-lg shadow-amber-500/20">
+                            เลือก
+                        </button>
+                    </td>
+                </tr>
+            `).join('') || '<tr><td colspan="4" class="px-6 py-10 text-center text-slate-400">ไม่พบสินค้าที่ค้นหา</td></tr>';
         }
 
         // Initial line

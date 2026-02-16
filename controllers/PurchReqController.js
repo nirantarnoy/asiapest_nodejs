@@ -57,10 +57,26 @@ exports.index = async (req, res) => {
 exports.create = async (req, res) => {
     try {
         const products = await db('product').select('id', 'code', 'name');
-        res.render('purch-req/create', { products });
+        const warehouses = await db('warehouse').select('id', 'name');
+        res.render('purch-req/create', { products, warehouses });
     } catch (err) {
         console.error(err);
         res.status(500).send('Database Error');
+    }
+};
+
+exports.getWarehouseStock = async (req, res) => {
+    const { warehouse_id } = req.params;
+    try {
+        const stocks = await db('stock_sum as ss')
+            .leftJoin('product as p', 'ss.product_id', 'p.id')
+            .select('p.id', 'p.code', 'p.name', 'ss.qty')
+            .where('ss.warehouse_id', warehouse_id)
+            .andWhere('ss.qty', '>', 0);
+        res.json(stocks);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database Error' });
     }
 };
 

@@ -246,9 +246,8 @@
                     </div>
             </div>
 
-            <!-- User Management Group -->
             <div class="pt-2">
-                <% const userPaths=['/user-groups', '/users' , '/permissions' , '/logs/access' , '/logs/action' ]; %>
+                <% const userPaths=['/user-groups', '/users' , '/rbac/roles' , '/logs/access' , '/logs/action' ]; %>
                     <button
                         class="w-full flex items-center justify-between px-4 py-2 rounded-xl transition-all font-kanit <%= isSubActive(userPaths) ? 'bg-emerald-50/50 text-emerald-700' : 'text-slate-600 hover:bg-emerald-50' %>"
                         onclick="toggleSubmenu('userSettingsMenu')">
@@ -265,8 +264,8 @@
                             class="block py-2 text-sm <%= isActive('/user-groups') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">กลุ่มผู้ใช้งาน</a>
                         <a href="/users"
                             class="block py-2 text-sm <%= isActive('/users') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">ผู้ใช้งาน</a>
-                        <a href="/permissions"
-                            class="block py-2 text-sm <%= isActive('/permissions') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">สิทธิ์การใช้งาน</a>
+                        <a href="/rbac/roles"
+                            class="block py-2 text-sm <%= currentPath.startsWith('/rbac') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">สิทธิ์การใช้งาน</a>
                         <a href="/logs/access"
                             class="block py-2 text-sm <%= isActive('/logs/access') ? 'text-emerald-600 font-bold' : 'text-slate-500 hover:text-emerald-600' %> font-kanit">Log
                             การเข้าใช้งาน</a>
